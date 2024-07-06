@@ -7,7 +7,10 @@
         src="<%= post.image_url %>"
         alt="<%= post.title %>"
         class="w-full h-[160px] mb-1" />
-      <h1 class="text-lg mb-1"><%= post.title %></h1>
+      <h1 class="text-lg mb-1">
+        <%= post.title.length > 20 ? post.title.substring(0, 25) + '...' :
+        post.title %>
+      </h1>
       <ul class="flex items-center gap-2">
         <li class="text-sm text-zinc-500">11hr ago</li>
         <li class="text-sm text-zinc-500">Javascript</li>

@@ -1,0 +1,58 @@
+<%- include("./includes/head.ejs") %>
+<section class="w-full h-full">
+  <div class="w-1/2 h-full mx-auto">
+    <header
+      class="w-full h-14 px-3 flex justify-start items-center border-b-2 border-zinc-950">
+      <a
+        href="/"
+        class="bg-black size-10 flex justify-center items-center text-white mr-2">
+        <i class="fa fa-arrow-left"></i>
+      </a>
+      <h1 class="text-xl">Edit your post</h1>
+    </header>
+    <form action="/admin/edit-post" method="post" class="w-full p-3">
+      <input
+        type="text"
+        name="_id"
+        value="<%= post._id %>"
+        class="px-3 py-1 border-2 border-zinc-400 outline-none focus:border-zinc-950"
+        required
+        hidden />
+      <div class="flex flex-col mb-2">
+        <label for="title" class="text-zinc-500 mb-1">Title</label>
+        <input
+          type="text"
+          name="title"
+          value="<%= post.title %>"
+          class="px-3 py-1 border-2 border-zinc-400 outline-none focus:border-zinc-950"
+          required />
+      </div>
+      <div class="flex flex-col mb-2">
+        <label for="image_url" class="text-zinc-500 mb-1">Image URL</label>
+        <input
+          type="text"
+          name="image_url"
+          value="<%= post.image_url %>"
+          class="px-3 py-1 border-2 border-zinc-400 outline-none focus:border-zinc-950"
+          required />
+      </div>
+      <div class="flex flex-col mb-2">
+        <label for="description" class="text-zinc-500 mb-1">Description</label>
+        <textarea
+          type="text"
+          name="description"
+          rows="10"
+          class="px-3 py-1 border-2 border-zinc-400 outline-none resize-none text-justify focus:border-zinc-950"
+          required>
+          <%= post.description %>"
+     </textarea
+        >
+      </div>
+      <button
+        class="w-full py-2 block mx-auto bg-zinc-950 text-white border border-zinc-950">
+        Edit Post
+      </button>
+    </form>
+  </div>
+</section>
+<%- include("./includes/foot.ejs") %>

@@ -18,14 +18,15 @@
       <div class="flex items-center justify-end gap-2 bg-zinc-100 p-2 mb-2">
         <a
           class="px-3 py-1 bg-zinc-950 text-white border border-zinc-950"
-          href="/edit-post"
+          href="/admin/edit-post/<%= post._id %>"
           >Edit</a
         >
-        <a
-          class="px-3 py-1 bg-zinc-950 text-white border border-zinc-950"
-          href="/delete-post"
-          >Delete</a
-        >
+        <form action="/admin/delete-post/<%= post._id %>" method="post">
+          <button
+            class="px-3 py-1 bg-zinc-950 text-white border border-zinc-950">
+            Delete
+          </button>
+        </form>
       </div>
       <h1 class="text-lg"><%= post.title %></h1>
       <p class="text-zinc-500 font-semibold text-justify">

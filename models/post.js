@@ -10,7 +10,7 @@ class Post {
 
   static find() {
     const db = getDatabase();
-    return db.collection("posts").find().toArray();
+    return db.collection("posts").find().sort({ title: 1 }).toArray();
   }
 
   static findById(id) {
@@ -22,6 +22,18 @@ class Post {
   create() {
     const db = getDatabase();
     return db.collection("posts").insertOne(this);
+  }
+
+  update(id) {
+    const db = getDatabase();
+    return db
+      .collection("posts")
+      .updateOne({ _id: new mongodb.ObjectId(id) }, { $set: this });
+  }
+
+  static delete(id) {
+    const db = getDatabase();
+    return db.collection("posts").deleteOne({ _id: new mongodb.ObjectId(id) });
   }
 }
 

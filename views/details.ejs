@@ -1,0 +1,37 @@
+<%- include("./includes/head.ejs") %>
+<section class="w-full h-full">
+  <div class="w-1/2 h-full mx-auto">
+    <header
+      class="w-full h-14 px-3 flex justify-start items-center border-b-2 border-zinc-950">
+      <a
+        href="/"
+        class="bg-black size-10 flex justify-center items-center text-white mr-2">
+        <i class="fa fa-arrow-left"></i>
+      </a>
+      <h1 class="text-xl">INOSUKE HASHIBIRA</h1>
+    </header>
+    <div class="w-full p-3 h-[calc(100%-3.5rem)] overflow-y-scroll">
+      <img
+        class="aspect-video mb-2"
+        src="<%= post.image_url %>"
+        alt="<%= post.title %>" />
+      <div class="flex items-center justify-end gap-2 bg-zinc-100 p-2 mb-2">
+        <a
+          class="px-3 py-1 bg-zinc-950 text-white border border-zinc-950"
+          href="/edit-post"
+          >Edit</a
+        >
+        <a
+          class="px-3 py-1 bg-zinc-950 text-white border border-zinc-950"
+          href="/delete-post"
+          >Delete</a
+        >
+      </div>
+      <h1 class="text-lg"><%= post.title %></h1>
+      <p class="text-zinc-500 font-semibold text-justify">
+        <%= post.description %>
+      </p>
+    </div>
+  </div>
+</section>
+<%- include("./includes/foot.ejs") %>

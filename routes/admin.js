@@ -8,6 +8,10 @@ const postControllers = require("../controllers/post");
 const router = express.Router();
 
 //* Route Path
+// Rendering Create Page
 router.get("/create-post", postControllers.renderCreatePage);
+
+// Creating Post
+router.post("/create-post", postControllers.createPost);
 
 module.exports = router;

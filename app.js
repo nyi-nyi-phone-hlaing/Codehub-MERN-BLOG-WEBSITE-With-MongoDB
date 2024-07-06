@@ -9,7 +9,7 @@ const bodyParser = require("body-parser");
 //* Local Imports
 const postRoutes = require("./routes/post");
 const adminRoutes = require("./routes/admin");
-const mongodbConnector = require("./utils/database");
+const { mongodbConnector } = require("./utils/database");
 
 //* Initializing
 const app = express();

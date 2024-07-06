@@ -1,0 +1,27 @@
+{
+  "name": "ejs-blog-website-with-mongodb",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app",
+    "build:css": "npx tailwindcss -i ./public/css/index.css -o ./public/css/style.css --watch"
+  },
+  "keywords": [],
+  "author": "webWizard101",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@fontsource/poppins": "^5.0.14",
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "mongodb": "^6.8.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.39",
+    "tailwindcss": "^3.4.4"
+  }
+}

@@ -11,6 +11,7 @@ const bodyParser = require("body-parser");
 const postRoutes = require("./routes/post");
 const adminRoutes = require("./routes/admin");
 const timeAgo = require("./utils/timeAgo");
+const User = require("./models/user");
 
 //* Initializing
 const app = express();
@@ -24,6 +25,15 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
+app.use((req, res, next) => {
+  User.findById("668a270c813c7b5e7a4d4761")
+    .then((user) => {
+      req.user = user;
+      next();
+    })
+    .catch((err) => console.log(err));
+});
+
 app.use(postRoutes);
 app.use("/admin", adminRoutes);
 
@@ -35,6 +45,21 @@ const port = process.env.PORT || 8081;
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
+    return User.findOne()
+      .then((user) => {
+        if (!user) {
+          User.create({
+            username: "webWizard",
+            email: "wizard123725@gmail.com",
+            password: "wizard083040",
+          });
+        }
+        user;
+      })
+
+      .catch((err) => console.log(err));
+  })
+  .then((result) => {
     console.log("Connected to MongoDB!");
     app.listen(port);
   })

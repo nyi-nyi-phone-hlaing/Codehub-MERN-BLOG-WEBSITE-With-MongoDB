@@ -3,6 +3,8 @@ const Post = require("../models/post");
 exports.renderHomePage = (req, res) => {
   Post.find()
     .sort({ createdAt: -1 })
+    .populate("userId", "username")
+    .select("title createdAt image_url")
     .then((posts) => {
       res.render("home", { title: "Home Page", posts });
     })
@@ -18,6 +20,7 @@ exports.renderCreatePage = (req, res) => {
 exports.renderDetailsPage = (req, res) => {
   const { id } = req.params;
   Post.findById(id)
+    .populate("userId", "username")
     .then((post) => {
       res.render("details", { title: post.title, post });
     })
@@ -39,7 +42,7 @@ exports.renderEditPage = (req, res) => {
 
 exports.createPost = (req, res) => {
   const { title, description, image_url } = req.body;
-  Post.create({ title, description, image_url })
+  Post.create({ title, description, image_url, userId: req.user })
     .then(() => {
       res.redirect("/");
     })

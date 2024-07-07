@@ -12,7 +12,7 @@
         post.title %>
       </h1>
       <ul class="flex items-center gap-2">
-        <li class="text-sm text-zinc-500">11hr ago</li>
+        <li class="text-sm text-zinc-500"><%= timeAgo(post.createdAt) %></li>
         <li class="text-sm text-zinc-500">Javascript</li>
       </ul>
     </div>

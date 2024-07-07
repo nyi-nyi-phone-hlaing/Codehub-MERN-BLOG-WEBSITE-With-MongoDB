@@ -28,9 +28,20 @@
           </button>
         </form>
       </div>
+      <ul class="flex items-center gap-2 mb-2">
+        <li class="text-sm text-zinc-500">
+          <i class="fa fa-clock"></i> <%= timeAgo(post.createdAt) %>
+        </li>
+        <% if(timeAgo(post.createdAt) != timeAgo(post.updatedAt)) { %>
+        <li class="text-sm text-zinc-500">
+          <i class="fa fa-pencil"></i>
+          Edited
+        </li>
+        <% } %>
+      </ul>
       <h1 class="text-lg"><%= post.title %></h1>
-      <p class="text-zinc-500 font-semibold text-justify">
-        <%= post.description %>
+      <p class="text-zinc-500 font-semibold text-justify whitespace-pre-wrap">
+        <%= post.description.trim() %>
       </p>
     </div>
   </div>

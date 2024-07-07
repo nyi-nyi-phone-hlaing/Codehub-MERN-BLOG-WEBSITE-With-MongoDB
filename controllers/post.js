@@ -2,6 +2,7 @@ const Post = require("../models/post");
 
 exports.renderHomePage = (req, res) => {
   Post.find()
+    .sort({ createdAt: -1 })
     .then((posts) => {
       res.render("home", { title: "Home Page", posts });
     })
@@ -38,9 +39,7 @@ exports.renderEditPage = (req, res) => {
 
 exports.createPost = (req, res) => {
   const { title, description, image_url } = req.body;
-  const post = new Post(title, description, image_url);
-  post
-    .create()
+  Post.create({ title, description, image_url })
     .then(() => {
       res.redirect("/");
     })
@@ -51,11 +50,17 @@ exports.createPost = (req, res) => {
 
 exports.editPost = (req, res) => {
   const { _id, title, description, image_url } = req.body;
-  const post = new Post(title, description, image_url);
-  post
-    .update(_id)
-    .then(() => {
-      res.redirect("/");
+
+  Post.findById(_id)
+    .then((post) => {
+      post.title = title;
+      post.description = description;
+      post.image_url = image_url;
+      return post.save();
+    })
+    .then((result) => {
+      console.log("Post Updated!");
+      res.redirect(`/post-details/${result._id}`);
     })
     .catch((err) => {
       console.log(err);
@@ -64,8 +69,9 @@ exports.editPost = (req, res) => {
 
 exports.deletePost = (req, res) => {
   const { id } = req.params;
-  Post.delete(id)
+  Post.findByIdAndDelete(id)
     .then(() => {
+      console.log("Post Deleted!");
       res.redirect("/");
     })
     .catch((err) => {

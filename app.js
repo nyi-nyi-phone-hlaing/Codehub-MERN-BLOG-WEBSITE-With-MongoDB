@@ -3,13 +3,14 @@ const path = require("path");
 
 //* NPM packages
 const express = require("express");
+const mongoose = require("mongoose");
 const dotenv = require("dotenv").config();
 const bodyParser = require("body-parser");
 
 //* Local Imports
 const postRoutes = require("./routes/post");
 const adminRoutes = require("./routes/admin");
-const { mongodbConnector } = require("./utils/database");
+const timeAgo = require("./utils/timeAgo");
 
 //* Initializing
 const app = express();
@@ -26,8 +27,15 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(postRoutes);
 app.use("/admin", adminRoutes);
 
+// Make the helper function available to EJS templates
+app.locals.timeAgo = timeAgo;
+
 //* Server Setup
 const port = process.env.PORT || 8081;
-app.listen(port, () => {
-  mongodbConnector();
-});
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(() => {
+    console.log("Connected to MongoDB!");
+    app.listen(port);
+  })
+  .catch((err) => console.log(err));

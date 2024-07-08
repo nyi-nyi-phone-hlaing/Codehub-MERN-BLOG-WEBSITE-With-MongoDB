@@ -7,8 +7,14 @@ exports.renderSignUpPage = (req, res) => {
 };
 
 exports.loginAccount = (req, res) => {
-  res.setHeader("Set-Cookie", "isLogin=true");
+  req.session.isLogin = true;
   res.redirect("/");
 };
 
 exports.signupAccount = (req, res) => {};
+
+exports.logoutAccount = (req, res) => {
+  req.session.destroy((_) => {
+    res.redirect("/");
+  });
+};

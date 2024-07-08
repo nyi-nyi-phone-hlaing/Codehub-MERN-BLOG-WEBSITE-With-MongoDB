@@ -18,15 +18,16 @@
           <a href="/" class="">Home</a>
           <% if(isLogin) { %>
           <a href="/admin/create-post" class="font-medium">Upload Post</a>
+          <a href="/admin/profile" class="font-medium">Profile</a>
           <% } %>
         </ul>
         <ul class="flex items-center gap-3">
           <% if(isLogin) { %>
-          <a
-            href="/"
-            class="px-3 py-1 bg-zinc-950 text-white border border-zinc-950">
-            Profile
-          </a>
+            <form action="/logout" method="post">
+              <button class="px-3 py-1 bg-zinc-950 text-white border border-zinc-950">
+                Logout
+              </button>
+            </form>
           <% } else { %>
           <a
             href="/login"

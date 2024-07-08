@@ -19,4 +19,7 @@ router.post("/login", authControllers.loginAccount);
 // Signup account
 router.post("/signup", authControllers.signupAccount);
 
+// Logout account
+router.post("/logout", authControllers.logoutAccount);
+
 module.exports = router;

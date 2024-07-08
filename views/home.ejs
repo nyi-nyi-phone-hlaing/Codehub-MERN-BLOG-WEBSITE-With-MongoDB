@@ -1,12 +1,13 @@
 <%- include("./includes/head.ejs") %>
-<section class="w-full max-h-full p-3 grid grid-cols-5 gap-3 overflow-y-scroll">
+<section
+  class="w-full max-h-full p-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 overflow-y-scroll">
   <% for(let post of posts) { %>
   <a href="/post-details/<%= post._id %>">
     <div class="overflow-hidden">
       <img
         src="<%= post.image_url %>"
         alt="<%= post.title %>"
-        class="w-full h-[160px] mb-1" />
+        class="w-full aspect-2/1 mb-1" />
       <h1 class="text-lg mb-1">
         <%= post.title.length > 20 ? post.title.substring(0, 25) + '...' :
         post.title %>

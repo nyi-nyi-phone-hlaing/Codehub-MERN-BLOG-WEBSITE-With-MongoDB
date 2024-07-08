@@ -10,6 +10,7 @@ const bodyParser = require("body-parser");
 //* Local Imports
 const postRoutes = require("./routes/post");
 const adminRoutes = require("./routes/admin");
+const authRoutes = require("./routes/auth");
 const timeAgo = require("./utils/timeAgo");
 const User = require("./models/user");
 
@@ -34,8 +35,17 @@ app.use((req, res, next) => {
     .catch((err) => console.log(err));
 });
 
+app.use((req, res, next) => {
+  const cookie = req.get("Cookie").split("=")[1] === "true";
+
+  console.log(cookie);
+  app.locals.isLogin = cookie;
+  next();
+});
+
 app.use(postRoutes);
 app.use("/admin", adminRoutes);
+app.use(authRoutes);
 
 // Make the helper function available to EJS templates
 app.locals.timeAgo = timeAgo;

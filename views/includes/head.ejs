@@ -3,7 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <link rel="stylesheet" href="/css/style.css" />
     <title><%= title %></title>
   </head>
@@ -14,16 +16,27 @@
         <h1 class="text-xl">TIME NEWS</h1>
         <ul class="flex items-center gap-3">
           <a href="/" class="">Home</a>
-          <a href="/admin/create-post" class="font-thin">Upload Post</a>
+          <% if(isLogin) { %>
+          <a href="/admin/create-post" class="font-medium">Upload Post</a>
+          <% } %>
         </ul>
         <ul class="flex items-center gap-3">
-          <button
+          <% if(isLogin) { %>
+          <a
+            href="/"
+            class="px-3 py-1 bg-zinc-950 text-white border border-zinc-950">
+            Profile
+          </a>
+          <% } else { %>
+          <a
+            href="/login"
             class="px-3 py-1 bg-zinc-950 text-white border border-zinc-950">
             Login
-          </button>
-          <button class="px-3 py-1 text-black border border-zinc-950">
-            Register
-          </button>
+          </a>
+          <a href="/signup" class="px-3 py-1 text-black border border-zinc-950">
+            Sign Up
+          </a>
+          <% } %>
         </ul>
       </nav>
       <section class="w-full h-[calc(100%-3.5rem)] overflow-hidden">

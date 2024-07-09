@@ -15,6 +15,9 @@
         class="aspect-video mb-2"
         src="<%= post.image_url %>"
         alt="<%= post.title %>" />
+
+      <% if(userInfo) { %> <% if(userInfo._id.toString() ===
+      post.userId._id.toString()) { %>
       <div class="flex items-center justify-end gap-2 bg-zinc-100 p-2 mb-2">
         <a
           class="px-3 py-1 bg-zinc-950 text-white border border-zinc-950"
@@ -28,6 +31,7 @@
           </button>
         </form>
       </div>
+      <% } %> <% } %>
       <ul class="flex items-center gap-2 mb-2">
         <li class="text-sm text-zinc-500">
           <i class="fa fa-clock"></i> <%= timeAgo(post.createdAt) %>

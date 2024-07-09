@@ -42,7 +42,8 @@ exports.renderEditPage = (req, res) => {
 
 exports.createPost = (req, res) => {
   const { title, description, image_url } = req.body;
-  Post.create({ title, description, image_url, userId: req.user })
+
+  Post.create({ title, description, image_url, userId: req.userInfo })
     .then(() => {
       res.redirect("/");
     })

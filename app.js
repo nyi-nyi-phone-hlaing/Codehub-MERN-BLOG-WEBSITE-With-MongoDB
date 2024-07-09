@@ -42,12 +42,9 @@ app.use(
 
 app.use((req, res, next) => {
   app.locals.isLogin = req.session.isLogin ? true : false;
-  User.findById("668a270c813c7b5e7a4d4761")
-    .then((user) => {
-      req.user = user;
-      next();
-    })
-    .catch((err) => console.log(err));
+  app.locals.userInfo = req.session.userInfo ? req.session.userInfo : null;
+  req.userInfo = req.session.userInfo;
+  next();
 });
 
 app.use(postRoutes);
@@ -62,21 +59,6 @@ const port = process.env.PORT || 8081;
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
-    return User.findOne()
-      .then((user) => {
-        if (!user) {
-          User.create({
-            username: "webWizard",
-            email: "wizard123725@gmail.com",
-            password: "wizard083040",
-          });
-        }
-        user;
-      })
-
-      .catch((err) => console.log(err));
-  })
-  .then((result) => {
     console.log("Connected to MongoDB!");
     app.listen(port);
   })

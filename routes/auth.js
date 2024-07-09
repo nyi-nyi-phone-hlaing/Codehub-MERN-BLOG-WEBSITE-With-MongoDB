@@ -22,4 +22,7 @@ router.post("/signup", authControllers.signupAccount);
 // Logout account
 router.post("/logout", authControllers.logoutAccount);
 
+// View Profile
+router.get("/profile/:id", authControllers.renderViewProfile);
+
 module.exports = router;

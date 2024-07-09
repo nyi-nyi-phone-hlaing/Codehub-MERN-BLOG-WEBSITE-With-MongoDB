@@ -8,6 +8,7 @@ const dotenv = require("dotenv").config();
 const bodyParser = require("body-parser");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
+const csrf = require("csurf");
 
 //* Local Imports
 const postRoutes = require("./routes/post");
@@ -15,9 +16,11 @@ const adminRoutes = require("./routes/admin");
 const authRoutes = require("./routes/auth");
 const timeAgo = require("./utils/timeAgo");
 const User = require("./models/user");
+const { isLogin } = require("./middleware/isLogin");
 
 //* Initializing
 const app = express();
+const csrfProtect = csrf();
 const store = new MongoDBStore({
   uri: process.env.MONGODB_URI,
   collection: "sessions",
@@ -39,16 +42,24 @@ app.use(
     saveUninitialized: false,
   })
 );
+app.use(csrfProtect);
 
 app.use((req, res, next) => {
   app.locals.isLogin = req.session.isLogin ? true : false;
-  app.locals.userInfo = req.session.userInfo ? req.session.userInfo : null;
-  req.userInfo = req.session.userInfo;
+  app.locals.csrfToken = req.csrfToken();
+  if (req.session.isLogin) {
+    app.locals.userInfo = req.session.userInfo;
+    User.findById(req.session.userInfo._id)
+      .select("_id username email")
+      .then((user) => {
+        req.userInfo = user;
+      });
+  }
   next();
 });
 
 app.use(postRoutes);
-app.use("/admin", adminRoutes);
+app.use("/admin", isLogin, adminRoutes);
 app.use(authRoutes);
 
 // Make the helper function available to EJS templates

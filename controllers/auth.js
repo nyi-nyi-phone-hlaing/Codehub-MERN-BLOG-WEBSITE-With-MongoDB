@@ -1,6 +1,20 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const saltRound = 10;
+
+exports.renderViewProfile = (req, res) => {
+  const { id } = req.params;
+  User.findById(id)
+    .select("_id username email")
+    .then((user) => {
+      if (!user) {
+        return res.redirect("/");
+      }
+      res.render("profile", { title: user.username, user });
+    })
+    .catch((err) => console.log(err));
+};
+
 exports.renderLoginPage = (req, res) => {
   res.render("auth/login", { title: "Login", errorMsg: null });
 };

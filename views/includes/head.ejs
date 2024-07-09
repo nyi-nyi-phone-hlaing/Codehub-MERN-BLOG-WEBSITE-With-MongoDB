@@ -18,12 +18,13 @@
           <a href="/" class="">Home</a>
           <% if(isLogin) { %>
           <a href="/admin/create-post" class="font-medium">Upload Post</a>
-          <a href="/admin/profile" class="font-medium">Profile</a>
+          <a href="/profile/<%= userInfo._id %>" class="font-medium">Profile</a>
           <% } %>
         </ul>
         <ul class="flex items-center gap-3">
           <% if(isLogin) { %>
             <form action="/logout" method="post">
+              <input type="text" name="_csrf" value="<%= csrfToken %>" hidden />
               <button class="px-3 py-1 bg-zinc-950 text-white border border-zinc-950">
                 Logout
               </button>

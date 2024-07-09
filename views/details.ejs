@@ -8,7 +8,11 @@
         class="bg-black size-10 flex justify-center items-center text-white mr-2">
         <i class="fa fa-arrow-left"></i>
       </a>
-      <h1 class="text-xl"><%= post.userId.username %>'s Post</h1>
+      <h1 class="text-xl">
+        <a href="/profile/<%= post.userId._id %>"
+          ><%= post.userId.username %></a
+        >
+      </h1>
     </header>
     <div class="w-full p-3 h-[calc(100%-3.5rem)] overflow-y-scroll">
       <img
@@ -16,8 +20,8 @@
         src="<%= post.image_url %>"
         alt="<%= post.title %>" />
 
-      <% if(userInfo) { %> <% if(userInfo._id.toString() ===
-      post.userId._id.toString()) { %>
+      <% if(isLogin && userInfo._id.toString() === post.userId._id.toString()) {
+      %>
       <div class="flex items-center justify-end gap-2 bg-zinc-100 p-2 mb-2">
         <a
           class="px-3 py-1 bg-zinc-950 text-white border border-zinc-950"
@@ -25,13 +29,14 @@
           >Edit</a
         >
         <form action="/admin/delete-post/<%= post._id %>" method="post">
+          <input type="text" name="_csrf" value="<%= csrfToken %>" hidden />
           <button
             class="px-3 py-1 bg-zinc-950 text-white border border-zinc-950">
             Delete
           </button>
         </form>
       </div>
-      <% } %> <% } %>
+      <% } %>
       <ul class="flex items-center gap-2 mb-2">
         <li class="text-sm text-zinc-500">
           <i class="fa fa-clock"></i> <%= timeAgo(post.createdAt) %>

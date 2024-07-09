@@ -14,7 +14,9 @@ exports.renderHomePage = (req, res) => {
 };
 
 exports.renderCreatePage = (req, res) => {
-  res.render("create-post", { title: "Create Post Page" });
+  res.render("create-post", {
+    title: "Create Post Page",
+  });
 };
 
 exports.renderDetailsPage = (req, res) => {
@@ -42,8 +44,7 @@ exports.renderEditPage = (req, res) => {
 
 exports.createPost = (req, res) => {
   const { title, description, image_url } = req.body;
-
-  Post.create({ title, description, image_url, userId: req.userInfo })
+  Post.create({ title, description, image_url, userId: req.session.userInfo })
     .then(() => {
       res.redirect("/");
     })

@@ -11,6 +11,7 @@
       <h1 class="text-xl">Edit your post</h1>
     </header>
     <form action="/admin/edit-post" method="post" class="w-full p-3">
+      <input type="text" name="_csrf" value="<%= csrfToken %>" hidden />
       <input
         type="text"
         name="_id"

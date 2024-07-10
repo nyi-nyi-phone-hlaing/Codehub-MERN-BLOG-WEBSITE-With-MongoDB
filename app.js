@@ -9,6 +9,7 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
+const flash = require("connect-flash");
 
 //* Local Imports
 const postRoutes = require("./routes/post");
@@ -43,6 +44,7 @@ app.use(
   })
 );
 app.use(csrfProtect);
+app.use(flash());
 
 app.use((req, res, next) => {
   app.locals.isLogin = req.session.isLogin ? true : false;

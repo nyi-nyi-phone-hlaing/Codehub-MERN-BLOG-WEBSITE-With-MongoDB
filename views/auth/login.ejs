@@ -10,9 +10,9 @@
       </a>
       <h1 class="text-xl">Login to your account</h1>
     </header>
-    <% if(errorMsg) { %>
+    <% if(errorMsg !== "") { %>
     <p
-      class="w-full py-1 mt-2 bg-pink-200 text-red-500 text-center border border-pink-500">
+      class="w-full py-1 mt-2 bg-pink-100 text-red-500 text-center border border-pink-500">
       <%= errorMsg %>
     </p>
     <% } %>
@@ -23,6 +23,7 @@
         <input
           type="text"
           name="email"
+          value="<%= oldFormData && oldFormData.email %>"
           required
           class="px-3 py-1 border-2 border-zinc-400 outline-none focus:border-zinc-950" />
       </div>
@@ -31,6 +32,7 @@
         <input
           type="password"
           name="password"
+          value="<%= oldFormData && oldFormData.password %>"
           required
           class="px-3 py-1 border-2 border-zinc-400 outline-none focus:border-zinc-950" />
       </div>

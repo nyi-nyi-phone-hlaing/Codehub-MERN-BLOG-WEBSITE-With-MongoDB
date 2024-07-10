@@ -1,6 +1,15 @@
 <%- include("./includes/head.ejs") %>
 <section class="w-full h-full">
   <div class="w-full h-[250px] flex flex-col items-center justify-center">
+    <a class="size-10 bg-zinc-900 text-white flex justify-center items-center rounded-md mb-2" href="/">
+      <i class="fa fa-home"></i>
+    </a>
+    <% if(isLogin && userInfo._id.toString()===user._id.toString()) { %>
+    <form action="/admin/delete-account/<%= userInfo._id %>" method="post">
+      <input type="text" name="_csrf" value="<%= csrfToken %>" hidden />
+      <button class="bg-red-200 text-red-600 px-2 py-1 rounded-sm border border-red-600 mb-2">Delete Account</button>
+    </form>
+    <% } %>
     <img
       class="size-28 rounded-full overflow-hidden border-2 border-zinc-900 mb-3 object-cover"
       src="https://a.wattpad.com/useravatar/Official-Akaza.256.518691.jpg"

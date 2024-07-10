@@ -10,10 +10,11 @@
       </a>
       <h1 class="text-xl">Create a new account</h1>
     </header>
-    <% if(errorMsg) { %>
-    <p
-      class="w-full py-1 mt-2 bg-pink-200 text-red-500 text-center border border-pink-500">
-      <%= errorMsg %>
+    <% if(errorMsg.length) { %>
+        <p class="w-full py-1 mt-2 bg-pink-200 text-red-500 text-center border border-pink-500">
+      <% errorMsg.map(error => { %>
+        <%= error %> </br>
+      <% }) %>
     </p>
     <% } %>
     <form action="/signup" method="post" class="w-full p-3">

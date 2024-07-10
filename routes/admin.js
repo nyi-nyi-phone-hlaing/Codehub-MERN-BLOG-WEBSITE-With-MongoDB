@@ -3,6 +3,7 @@ const express = require("express");
 
 //* Local Imports
 const postControllers = require("../controllers/post");
+const authControllers = require("../controllers/auth");
 
 //* Initializing
 const router = express.Router();
@@ -22,5 +23,8 @@ router.post("/edit-post", postControllers.editPost);
 
 // Deleting Post
 router.post("/delete-post/:id", postControllers.deletePost);
+
+// Delete Account
+router.post("/delete-account/:id", authControllers.deleteAccount);
 
 module.exports = router;

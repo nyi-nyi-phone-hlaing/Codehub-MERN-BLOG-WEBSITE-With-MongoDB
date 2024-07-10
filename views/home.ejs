@@ -2,8 +2,8 @@
 <section
   class="w-full max-h-full p-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 overflow-y-scroll">
   <% for(let post of posts) { %>
-  <a href="/post-details/<%= post._id %>">
     <div class="overflow-hidden">
+      <a href="/post-details/<%= post._id %>">
       <img
         src="<%= post.image_url %>"
         alt="<%= post.title %>"
@@ -12,12 +12,16 @@
         <%= post.title.length > 20 ? post.title.substring(0, 25) + '...' :
         post.title %>
       </h1>
+    </a>
       <ul class="flex items-center gap-2">
         <li class="text-sm text-zinc-500"><%= timeAgo(post.createdAt) %></li>
-        <li class="text-sm text-zinc-500"><%= post.userId.username %></li>
+        <li title="View <%= post.userId.username %>'s profile" class="text-sm text-zinc-500 hover:text-blue-500">
+          <a href="/profile/<%= post.userId._id %>">
+            <%= post.userId.username %>
+          </a>
+        </li>
       </ul>
     </div>
-  </a>
   <% } %>
 </section>
 <%- include("./includes/foot.ejs") %>

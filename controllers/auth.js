@@ -7,12 +7,40 @@ const saltRound = 10;
 exports.renderViewProfile = (req, res) => {
   const { id } = req.params;
   User.findById(id)
-    .select("_id username email")
+    .select("_id username email profile_img bio")
     .then((user) => {
       if (!user) {
         return res.redirect("/");
       }
-      res.render("profile", { title: user.username, user });
+      Post.find({ userId: id })
+        .sort({ createdAt: -1 })
+        .then((posts) => {
+          res.render("profile", { title: user.username, user, posts });
+        })
+        .catch((err) => console.log(err));
+    })
+    .catch((err) => console.log(err));
+};
+
+exports.renderProfileEditPage = (req, res) => {
+  const { id } = req.params;
+  let message = req.flash("error");
+  if (message) {
+    message = message[0];
+  } else {
+    message = null;
+  }
+  User.findById(id)
+    .select("_id username email profile_img bio")
+    .then((user) => {
+      if (!user) {
+        return res.redirect(`/profile/${id}`);
+      }
+      res.render("edit-profile", {
+        title: user.username,
+        user,
+        errorMsg: message,
+      });
     })
     .catch((err) => console.log(err));
 };
@@ -130,4 +158,27 @@ exports.deleteAccount = (req, res) => {
         });
     })
     .catch((err) => console.log(err));
+};
+
+exports.updateProfile = (req, res) => {
+  const { id, username, profile_img, bio } = req.body;
+  User.findById(id)
+    .then((user) => {
+      User.find({ _id: { $ne: id } }).then((users) => {
+        let filterUsername = users.filter((u) => u.username === username);
+        if (filterUsername.length) {
+          console.log(filterUsername);
+          req.flash("error", "Username is already taken");
+          return res.redirect(`/admin/edit-personal-profile/${id}`);
+        }
+        user.username = username;
+        user.profile_img = profile_img;
+        user.bio = bio.trim();
+        user.save();
+        return res.redirect(`/profile/${id}`);
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };

@@ -15,6 +15,16 @@ const userSchema = new Schema(
       required: true,
       unique: true,
     },
+    profile_img: {
+      type: String,
+      default:
+        "https://icons.veryicon.com/png/o/miscellaneous/two-color-icon-library/user-286.png",
+    },
+    bio: {
+      type: String,
+      default: "",
+      maxLength: 400,
+    },
     password: {
       type: String,
       required: true,

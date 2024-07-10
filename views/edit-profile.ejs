@@ -1,0 +1,62 @@
+<%- include("./includes/head.ejs") %>
+
+<section class="w-full h-full">
+  <div class="w-1/2 max-lg:w-3/4 max-md:w-4/5 max-sm:w-full h-full mx-auto">
+    <header
+      class="w-full h-14 px-3 flex justify-start items-center border-b-2 border-zinc-950">
+      <a
+        href="/"
+        class="bg-black size-10 flex justify-center items-center text-white mr-2">
+        <i class="fa fa-arrow-left"></i>
+      </a>
+      <h1 class="text-xl">Edit your personal profile</h1>
+    </header>
+    <% if(errorMsg) { %>
+    <p
+      class="w-full py-1 mt-2 bg-pink-100 text-red-500 text-center border border-pink-500">
+      <%= errorMsg %>
+    </p>
+    <% } %>
+    <form action="/admin/update-profile" method="post" class="w-full p-3">
+      <input type="text" name="_csrf" value="<%= csrfToken %>" hidden />
+      <input type="text" name="id" value="<%= user._id %>" hidden />
+      <div class="flex flex-col mb-2">
+        <label for="username" class="text-zinc-500 mb-1">Username</label>
+        <input
+          type="text"
+          name="username"
+          value="<%= user.username %>"
+          required
+          class="px-3 py-1 border-2 border-zinc-400 outline-none focus:border-zinc-950" />
+      </div>
+      <div class="flex flex-col mb-2">
+        <label for="profile_img" class="text-zinc-500 mb-1">
+          Profile Image URL
+        </label>
+        <input
+          type="text"
+          name="profile_img"
+          value="<%= user.profile_img %>"
+          class="px-3 py-1 border-2 border-zinc-400 outline-none focus:border-zinc-950" />
+      </div>
+      <div class="flex flex-col mb-2">
+        <label for="bio" class="text-zinc-500 mb-1">Bio</label>
+        <textarea
+          type="text"
+          name="bio"
+          rows="5"
+          placeholder="maximum 400 characters"
+          class="px-2 py-1 border-2 border-zinc-400 outline-none resize-none focus:border-zinc-950"
+          required>
+<%= user.bio %>      
+        </textarea>
+      </div>
+      <button
+        class="w-full py-2 block mx-auto bg-zinc-950 text-white border border-zinc-950">
+        Update Profile
+      </button>
+    </form>
+  </div>
+</section>
+
+<%- include("./includes/foot.ejs") %>

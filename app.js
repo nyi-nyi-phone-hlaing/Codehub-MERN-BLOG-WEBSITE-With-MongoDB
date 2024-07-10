@@ -52,7 +52,7 @@ app.use((req, res, next) => {
   if (req.session.isLogin) {
     app.locals.userInfo = req.session.userInfo;
     User.findById(req.session.userInfo._id)
-      .select("_id username email")
+      .select("_id username email profile_img")
       .then((user) => {
         req.userInfo = user;
       });

@@ -22,7 +22,7 @@ exports.renderCreatePage = (req, res) => {
 exports.renderDetailsPage = (req, res) => {
   const { id } = req.params;
   Post.findById(id)
-    .populate("userId", "username")
+    .populate("userId", "username profile_img")
     .then((post) => {
       res.render("details", { title: post.title, post });
     })

@@ -27,4 +27,10 @@ router.post("/delete-post/:id", postControllers.deletePost);
 // Delete Account
 router.post("/delete-account/:id", authControllers.deleteAccount);
 
+// Rendering Profile Edit Page
+router.get("/edit-personal-profile/:id", authControllers.renderProfileEditPage);
+
+// Updating Profile
+router.post("/update-profile", authControllers.updateProfile);
+
 module.exports = router;

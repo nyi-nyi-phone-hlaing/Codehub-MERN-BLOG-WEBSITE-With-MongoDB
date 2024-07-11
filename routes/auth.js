@@ -25,4 +25,19 @@ router.post("/logout", authControllers.logoutAccount);
 // View Profile
 router.get("/profile/:id", authControllers.renderViewProfile);
 
+// Rendering Reset Password Page
+router.get("/reset-password", authControllers.renderResetPasswordPage);
+
+// Request Reset Password Link
+router.post("/reset-password", authControllers.requestResetPasswordLink);
+
+// Rendering Feedback Page
+router.get("/feedback", authControllers.renderFeedbackPage);
+
+// Rendering Change New Password Page
+router.get("/reset-password/:token", authControllers.changeNewPasswordPage);
+
+// Updating Password
+router.post("/update-password", authControllers.updatePassword);
+
 module.exports = router;

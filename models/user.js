@@ -31,6 +31,8 @@ const userSchema = new Schema(
       min: 4,
       max: 16,
     },
+    resetToken: String,
+    tokenExpiration: Date,
   },
   { timestamps: true }
 );

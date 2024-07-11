@@ -1,0 +1,32 @@
+<%- include("../includes/head.ejs") %>
+<section class="w-full h-full flex justify-center items-center">
+  <div>
+    <h1 class="font-extrabold text-center text-2xl mb-3">
+      Password Reset Request
+    </h1>
+    <p class="text-zinc-500 mb-3">
+      If an account with this email exists, a password reset link has been sent
+      to your email address. <br />
+      Please check your email and follow the instructions to reset your
+      password. <br />
+      If you do not receive the email within a few minutes, please check your
+      spam folder or
+      <a class="text-blue-500" href="/reset-password">try again</a>.
+    </p>
+
+    <div class="flex items-center justify-center gap-3">
+      <p
+        class="px-2 py-1 bg-blue-500 text-white rounded-md hover:brightness-90">
+        <a href="/">Return to Home Page</a>
+      </p>
+      <span>or</span>
+      <p
+        class="px-2 py-1 bg-blue-500 text-white rounded-md hover:brightness-90">
+        <a target="_blank" href="https://mail.google.com/mail/u/0/#inbox"
+          >Open your Gmail</a
+        >.
+      </p>
+    </div>
+  </div>
+</section>
+<%- include("../includes/foot.ejs") %>

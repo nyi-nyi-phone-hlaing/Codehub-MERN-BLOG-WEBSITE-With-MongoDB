@@ -1,8 +1,51 @@
+const crypto = require("crypto");
 const User = require("../models/user");
 const Post = require("../models/post");
 const bcrypt = require("bcryptjs");
 const mailSending = require("../utils/mailSending");
 const saltRound = 10;
+
+exports.renderResetPasswordPage = (req, res) => {
+  let message = req.flash("error");
+  if (message) {
+    message = message[0];
+  } else {
+    message = null;
+  }
+
+  res.render("auth/reset-password", {
+    title: "Reset Password",
+    errorMsg: message,
+  });
+};
+
+exports.changeNewPasswordPage = (req, res) => {
+  const { token } = req.params;
+  let message = req.flash("error");
+  if (message) {
+    message = message[0];
+  } else {
+    message = null;
+  }
+
+  User.findOne({ resetToken: token, tokenExpiration: { $gt: Date.now() } })
+    .then((user) => {
+      if (user) {
+        return res.render("auth/new-password", {
+          title: "Change New Password",
+          errorMsg: message,
+          resetToken: token,
+          userId: user._id,
+        });
+      }
+      res.redirect("/reset-password");
+    })
+    .catch((err) => console.log(err));
+};
+
+exports.renderFeedbackPage = (req, res) => {
+  res.render("auth/feedback", { title: "Feedback" });
+};
 
 exports.renderViewProfile = (req, res) => {
   const { id } = req.params;
@@ -115,14 +158,14 @@ exports.signupAccount = (req, res) => {
           res.redirect("/login");
           mailSending({
             to: email,
-            subject: "Sign Up Successfully",
+            subject: "Welcome to Dev Diaries!",
             text: "",
             html: `
             <div>
                 <p>Hi ${username},</p>
-                <p>Thank you for signing up for our Blog Website. We're excited to have you on board!</p>
-                <p>If you have any questions, feel free to reply to this email or visit our <a href="${process.env.SENDER}">support page</a>.</p>
-                <p>Best regards,<br>The Team</p>
+                <p>Thank you for registering on Dev Diaries! We are thrilled to have you as a part of our community./p>
+                <p>You can now log in and start exploring our content, participating in discussions, and sharing your own development journey.</p>
+                <p>Best regards,<br>The Dev Diaries Team</p>
             </div>
             `,
           });
@@ -181,4 +224,73 @@ exports.updateProfile = (req, res) => {
     .catch((err) => {
       console.log(err);
     });
+};
+
+exports.requestResetPasswordLink = (req, res) => {
+  const { email } = req.body;
+
+  crypto.randomBytes(32, (err, buffer) => {
+    if (err) {
+      console.log(err);
+      return res.redirect("/reset-password");
+    }
+    const token = buffer.toString("hex");
+    User.findOne({ email })
+      .then((user) => {
+        if (!user) {
+          req.flash("error", "Sorry, we couldn't find a user with this email.");
+          return res.redirect("/reset-password");
+        }
+        user.resetToken = token;
+        user.tokenExpiration = Date.now() + 300000;
+        user.save();
+        mailSending({
+          to: email,
+          subject: "Password Reset Request",
+          text: "",
+          html: `
+            <div>
+                <p>Dear ${user.name},</p>
+                <p>We received a request to reset your password for your account associated with this email address. If you made this request, please click on the link below to reset your password:</p>
+                <a href="http://localhost:8080/reset-password/${token}">Click here to reset your password</a>
+                <p>This link will expire in 5 minutes for security purposes. If you did not request a password reset, please ignore this email, and your password will remain unchanged.</p>
+                <p>Thank you, </br> The Dev Diaries Team</p>
+                </br>
+                <p>----</p>
+                <p>Note: Do not reply to this email. This mailbox is not monitored.</p>
+            </div>
+            `,
+        });
+        return res.redirect("/feedback");
+      })
+      .catch((err) => console.log(err));
+  });
+};
+
+exports.updatePassword = (req, res) => {
+  const { password, confirmPassword, resetToken, userId } = req.body;
+
+  let resetUser;
+  User.findOne({
+    resetToken,
+    tokenExpiration: { $gt: Date.now() },
+    _id: userId,
+  })
+    .then((user) => {
+      if (password === confirmPassword) {
+        resetUser = user;
+        return bcrypt
+          .hash(password, saltRound)
+          .then((hashPassword) => {
+            resetUser.password = hashPassword;
+            resetUser.resetToken = undefined;
+            resetUser.tokenExpiration = undefined;
+            resetUser.save();
+            res.redirect("/login");
+          })
+          .catch((err) => console.log(err));
+      }
+      return res.redirect(`/reset-password/${resetToken}`);
+    })
+    .catch((err) => console.log(err));
 };

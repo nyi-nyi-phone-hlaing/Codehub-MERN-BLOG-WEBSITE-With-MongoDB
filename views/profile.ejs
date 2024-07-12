@@ -10,11 +10,24 @@
     <div>
       <h1 class="text-2xl mb-1"><%= user.username %></h1>
       <p class="text-blue-500 mb-1 uppercase">UID - <%= user._id %></p>
-      <p class="mb-2 text-zinc-500">
+      <div class="flex items-center gap-3 mb-1">
+        <p class="text-zinc-900 hover:text-blue-500">
+          <a href="/view-followers/<%= user._id %>">
+            Followers - <%= user.followers.length %>
+          </a>
+        </p>
+        <p class="text-zinc-900 hover:text-blue-500">
+          <a href="/view-following/<%= user._id %>">
+            Following - <%= user.following.length %>
+          </a>
+        </p>
+      </div>
+      <p
+        class="text-sm !font-normal mb-2 text-zinc-900 bg-zinc-100 p-2 rounded-md border border-zinc-400">
         <%= user.bio ? user.bio : "No bio added" %>
       </p>
-      <% if(isLogin && userInfo._id.toString() === user._id.toString()) { %>
-      <div class="flex items-center gap-4 flex-wrap">
+      <div class="flex items-center gap-x-4 flex-wrap">
+        <% if(isLogin && userInfo._id.toString() === user._id.toString()) { %>
         <a
           class="bg-blue-500 text-white px-2 py-1 rounded-sm mb-2 border border-blue-500"
           href="/admin/create-post"
@@ -25,16 +38,44 @@
           href="/admin/edit-personal-profile/<%= user._id %>"
           >Edit your personal profile</a
         >
-        <form action="/admin/delete-account/<%= userInfo._id %>" method="post">
+        <form action="/logout" method="post">
+          <input type="text" name="_csrf" value="<%= csrfToken %>" hidden />
+          <button class="bg-red-200 text-red-600 px-2 py-1 rounded-sm border border-red-600 mb-2">
+            Logout
+          </button>
+        </form>
+        <form id="deleteAccountForm" action="/admin/delete-account/<%= userInfo._id %>" method="post">
           <input type="text" name="_csrf" value="<%= csrfToken %>" hidden />
           <button
-            class="bg-red-200 text-red-600 px-2 py-1 rounded-sm border border-red-600 mb-2">
+            class="bg-red-600 text-white px-2 py-1 rounded-sm border border-red-600 mb-2">
             Delete Account
           </button>
         </form>
+        <% } %>
+        <!--Hello-->
+        <% if(isLogin && userInfo._id.toString() !== user._id.toString()) { %>
+        <% if(!isFollowing(userInfo, user)) { %>
+        <form action="/admin/follow" method="post">
+          <input type="text" name="_csrf" value="<%= csrfToken %>" hidden />
+          <input type="text" name="userId" value="<%= userInfo._id %>" hidden />
+          <input type="text" name="followId" value="<%= user._id %>" hidden />
+          <button class="bg-blue-500 text-white px-2 py-1 rounded-sm">
+            Follow
+          </button>
+        </form>
+        <% } else { %>
+        <form action="/admin/unfollow" method="post">
+          <input type="text" name="_csrf" value="<%= csrfToken %>" hidden />
+          <input type="text" name="userId" value="<%= userInfo._id %>" hidden />
+          <input type="text" name="unfollowId" value="<%= user._id %>" hidden />
+          <button class="bg-blue-500 text-white px-2 py-1 rounded-sm">
+            Unfollow
+          </button>
+        </form>
+        <% } %>
+        <!--Space-->
+        <% } %>
       </div>
-
-      <% } %>
     </div>
   </div>
   <div class="w-full p-3 overflow-hidden">

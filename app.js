@@ -15,9 +15,11 @@ const flash = require("connect-flash");
 const postRoutes = require("./routes/post");
 const adminRoutes = require("./routes/admin");
 const authRoutes = require("./routes/auth");
+const userRoutes = require("./routes/user");
 const timeAgo = require("./utils/timeAgo");
 const User = require("./models/user");
 const { isLogin } = require("./middleware/isLogin");
+const isFollowing = require("./utils/isFollowing");
 
 //* Initializing
 const app = express();
@@ -52,7 +54,7 @@ app.use((req, res, next) => {
   if (req.session.isLogin) {
     app.locals.userInfo = req.session.userInfo;
     User.findById(req.session.userInfo._id)
-      .select("_id username email profile_img")
+      .select("_id username email profile_img followers following")
       .then((user) => {
         req.userInfo = user;
       });
@@ -63,9 +65,11 @@ app.use((req, res, next) => {
 app.use(postRoutes);
 app.use("/admin", isLogin, adminRoutes);
 app.use(authRoutes);
+app.use(userRoutes);
 
 // Make the helper function available to EJS templates
 app.locals.timeAgo = timeAgo;
+app.locals.isFollowing = isFollowing;
 
 //* Server Setup
 const port = process.env.PORT || 8081;

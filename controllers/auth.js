@@ -50,7 +50,7 @@ exports.renderFeedbackPage = (req, res) => {
 exports.renderViewProfile = (req, res) => {
   const { id } = req.params;
   User.findById(id)
-    .select("_id username email profile_img bio")
+    .select("_id username email profile_img bio followers following")
     .then((user) => {
       if (!user) {
         return res.redirect("/");
@@ -163,7 +163,7 @@ exports.signupAccount = (req, res) => {
             html: `
             <div>
                 <p>Hi ${username},</p>
-                <p>Thank you for registering on Dev Diaries! We are thrilled to have you as a part of our community./p>
+                <p>Thank you for registering on Dev Diaries! We are thrilled to have you as a part of our community. </p>
                 <p>You can now log in and start exploring our content, participating in discussions, and sharing your own development journey.</p>
                 <p>Best regards,<br>The Dev Diaries Team</p>
             </div>
@@ -218,7 +218,13 @@ exports.updateProfile = (req, res) => {
         user.profile_img = profile_img;
         user.bio = bio.trim();
         user.save();
-        return res.redirect(`/profile/${id}`);
+        req.session.userInfo = user;
+        req.session.save((err) => {
+          res.redirect(`/profile/${id}`);
+          if (err) {
+            console.log(err);
+          }
+        });
       });
     })
     .catch((err) => {

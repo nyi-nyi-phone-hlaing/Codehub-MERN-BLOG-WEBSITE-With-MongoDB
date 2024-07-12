@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 
 const DEFAULT_IMAGE_URL =
-  "https://wallpapers.com/images/hd/plain-light-blue-background-2560-x-1440-gsp5z0x4fwby74an.jpg";
+  "https://th.bing.com/th/id/OIG1.0F2_LJg.keG6BjHPwwjQ?w=1024&h=1024&rs=1&pid=ImgDetMain";
 
 const ensureImageUrl = (schema) => {
   schema.pre("save", function (next) {

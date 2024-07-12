@@ -1,0 +1,73 @@
+<%- include("./includes/head.ejs") %>
+
+<section class="w-full h-full">
+  <h1 class="text-xl mx-3 py-2">
+    <%= isLogin && user._id.toString() !== userInfo._id.toString() ?
+    user.username + "'s" : "My" %> followers
+  </h1>
+  <% if(followers.length === 0 ) { %>
+  <section class="w-full h-full flex justify-center items-center">
+    <div>
+      <h1 class="text-zinc-500 text-xl mb-3">
+        <%= isLogin && user._id.toString() !== userInfo._id.toString() ?
+        user.username : "You" %> doesn't have followers
+      </h1>
+      <a
+        href="/profile/<%= user._id %>"
+        class="bg-blue-500 text-white px-2 py-1 rounded-sm text-nowrap">
+        View Profile
+      </a>
+    </div>
+  </section>
+  <% } %>
+  <div class="w-full grid grid-cols-6 p-3 gap-3">
+    <% for(let follower of followers) { %>
+    <div
+      class="p-3 flex flex-col items-center gap-1 rounded-md bg-blue-50 shadow-md">
+      <a href="/profile/<%= follower._id %>">
+        <img
+          class="size-14 rounded-md overflow-hidden"
+          src="<%= follower.profile_img %>"
+          alt="<%= follower.username %>'s profile image" />
+      </a>
+      <a href="/profile/<%= follower._id %>">
+        <h1 class="text-lg">
+          <%= follower.username.length > 12 ? follower.username.substring(0, 12)
+          + "..." : follower.username %>
+        </h1>
+      </a>
+      <p><%= follower.followers.length %> followers</p>
+
+      <% if(isLogin && !isFollowing(userInfo, follower) &&
+      userInfo._id.toString() !== follower._id.toString() ) { %>
+      <form action="/admin/follow" method="post">
+        <input type="text" name="_csrf" value="<%= csrfToken %>" hidden />
+        <input type="text" name="userId" value="<%= userInfo._id %>" hidden />
+        <input type="text" name="followId" value="<%= follower._id %>" hidden />
+        <button class="bg-blue-500 text-white px-2 py-1 rounded-sm text-nowrap">
+          <%= user._id.toString() === userInfo._id.toString() ? "Follow Back" :
+          "Follow" %>
+        </button>
+      </form>
+      <% } else if(isLogin && userInfo._id.toString() !==
+      follower._id.toString()) { %>
+      <form action="/admin/unfollow" method="post">
+        <input type="text" name="_csrf" value="<%= csrfToken %>" hidden />
+        <input type="text" name="userId" value="<%= userInfo._id %>" hidden />
+        <input
+          type="text"
+          name="unfollowId"
+          value="<%= follower._id %>"
+          hidden />
+        <button class="bg-blue-500 text-white px-2 py-1 rounded-sm">
+          Unfollow
+        </button>
+      </form>
+      <% } %>
+    </div>
+
+    <% } %>
+  </div>
+</section>
+
+<%- include("./includes/foot.ejs") %>

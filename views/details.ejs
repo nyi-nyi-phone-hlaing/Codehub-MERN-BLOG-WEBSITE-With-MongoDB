@@ -36,7 +36,10 @@
           href="/admin/edit-post/<%= post._id %>"
           >Edit</a
         >
-        <form action="/admin/delete-post/<%= post._id %>" method="post">
+        <form
+          id="deletePostForm"
+          action="/admin/delete-post/<%= post._id %>"
+          method="post">
           <input type="text" name="_csrf" value="<%= csrfToken %>" hidden />
           <button
             class="px-3 py-1 bg-zinc-950 text-white border border-zinc-950">

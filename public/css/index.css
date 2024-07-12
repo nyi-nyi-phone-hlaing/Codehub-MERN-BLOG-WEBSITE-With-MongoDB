@@ -5,3 +5,11 @@
 * {
   @apply font-sans;
 }
+
+a , button {
+  @apply hover:brightness-90
+}
+
+img{
+  @apply object-cover
+}

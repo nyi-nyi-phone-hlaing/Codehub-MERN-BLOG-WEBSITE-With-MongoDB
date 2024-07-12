@@ -4,6 +4,7 @@ const express = require("express");
 //* Local Imports
 const postControllers = require("../controllers/post");
 const authControllers = require("../controllers/auth");
+const userControllers = require("../controllers/user");
 
 //* Initializing
 const router = express.Router();
@@ -32,5 +33,11 @@ router.get("/edit-personal-profile/:id", authControllers.renderProfileEditPage);
 
 // Updating Profile
 router.post("/update-profile", authControllers.updateProfile);
+
+// Follow
+router.post("/follow", userControllers.followUser);
+
+// Unfollow
+router.post("/unfollow", userControllers.unfollowUser);
 
 module.exports = router;

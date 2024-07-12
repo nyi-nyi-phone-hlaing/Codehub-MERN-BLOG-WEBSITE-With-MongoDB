@@ -1,9 +1,31 @@
 <%- include("./includes/head.ejs") %>
+<!-- Check posts -->
+<% if(posts.length === 0) { %>
+<section class="w-full h-full flex justify-center items-center">
+  <div>
+    <h1 class="text-zinc-500 text-xl mb-3">No post avaliable yet!</h1>
+    <% if(isLogin) { %>
+    <a
+      class="bg-blue-500 text-white px-2 py-1 rounded-md mb-2 border border-blue-500"
+      href="/admin/create-post">
+      Create a new post
+    </a>
+    <% } else { %>
+    <a
+      class="bg-blue-500 text-white px-2 py-1 rounded-md mb-2 border border-blue-500"
+      href="/login">
+      Login First
+    </a>
+    <% } %>
+  </div>
+</section>
+<% } %>
+
 <section
   class="w-full max-h-full p-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 overflow-y-scroll">
   <% for(let post of posts) { %>
-    <div class="overflow-hidden">
-      <a href="/post-details/<%= post._id %>">
+  <div class="overflow-hidden">
+    <a href="/post-details/<%= post._id %>">
       <img
         src="<%= post.image_url %>"
         alt="<%= post.title %>"
@@ -13,15 +35,17 @@
         post.title %>
       </h1>
     </a>
-      <ul class="flex items-center gap-2">
-        <li class="text-sm text-zinc-500"><%= timeAgo(post.createdAt) %></li>
-        <li title="View <%= post.userId.username %>'s profile" class="text-sm text-zinc-500 hover:text-blue-500">
-          <a href="/profile/<%= post.userId._id %>">
-            <%= post.userId.username %>
-          </a>
-        </li>
-      </ul>
-    </div>
+    <ul class="flex items-center gap-2">
+      <li class="text-sm text-zinc-500"><%= timeAgo(post.createdAt) %></li>
+      <li
+        title="View <%= post.userId.username %>'s profile"
+        class="text-sm text-zinc-500 hover:text-blue-500">
+        <a href="/profile/<%= post.userId._id %>">
+          <%= post.userId.username %>
+        </a>
+      </li>
+    </ul>
+  </div>
   <% } %>
 </section>
 <%- include("./includes/foot.ejs") %>

@@ -8,7 +8,7 @@ const userSchema = new Schema(
       unique: true,
       required: true,
       minLength: 6,
-      maxLength: 32,
+      maxLength: 23,
     },
     email: {
       type: String,
@@ -18,7 +18,7 @@ const userSchema = new Schema(
     profile_img: {
       type: String,
       default:
-        "https://icons.veryicon.com/png/o/miscellaneous/two-color-icon-library/user-286.png",
+        "https://th.bing.com/th/id/OIG1.0F2_LJg.keG6BjHPwwjQ?w=1024&h=1024&rs=1&pid=ImgDetMain",
     },
     bio: {
       type: String,
@@ -33,6 +33,8 @@ const userSchema = new Schema(
     },
     resetToken: String,
     tokenExpiration: Date,
+    followers: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    following: [{ type: Schema.Types.ObjectId, ref: "User" }],
   },
   { timestamps: true }
 );

@@ -1,8 +1,23 @@
 </section>
 </main>
-
 <script>
-     // JavaScript to toggle the password visibility for multiple fields
+     // Function to confirm account deletion
+     document.getElementById('deletePostForm').onsubmit = function (e) {
+          if (!confirm('Are you sure you want to delete this post? This action cannot be undone.')) {
+               e.preventDefault();
+          }
+     };
+</script>
+<script>
+     // Function to confirm account deletion
+     document.getElementById('deleteAccountForm').onsubmit = function (e) {
+          if (!confirm('Are you sure you want to delete this account? This action cannot be undone.')) {
+               e.preventDefault();
+          }
+     };
+</script>
+<script>
+     // Function to toggle the password visibility for multiple fields
      document.querySelectorAll('.togglePassword').forEach(button => {
           button.addEventListener('click', function (e) {
                // Prevent form submission
@@ -12,18 +27,19 @@
                // Toggle the type attribute
                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
                passwordField.setAttribute('type', type);
-               // Toggle the button text
-               let i = this.querySelector('i')
-               if (type === "password") {
-                    i.classList.add("fa-eye")
-                    i.classList.remove("fa-eye-slash")
+               // Toggle the button icon
+               const icon = this.querySelector('i');
+               if (type === 'password') {
+                    icon.classList.add('fa-eye');
+                    icon.classList.remove('fa-eye-slash');
                } else {
-                    i.classList.remove("fa-eye")
-                    i.classList.add("fa-eye-slash")
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
                }
-               
           });
      });
 </script>
+
+
 </body>
 </html>

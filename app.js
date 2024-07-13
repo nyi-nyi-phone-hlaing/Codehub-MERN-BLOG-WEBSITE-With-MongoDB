@@ -49,6 +49,7 @@ app.use(csrfProtect);
 app.use(flash());
 
 app.use((req, res, next) => {
+  app.locals.prevUrl = req.get("Referer") || "/";
   app.locals.isLogin = req.session.isLogin ? true : false;
   app.locals.csrfToken = req.csrfToken();
   if (req.session.isLogin) {

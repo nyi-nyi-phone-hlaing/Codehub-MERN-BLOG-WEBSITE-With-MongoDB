@@ -9,7 +9,7 @@
         <i class="fa fa-arrow-left"></i>
       </a>
       <h1
-        class="text-xl"
+        class="text-xl mr-3"
         title="Click to view <%= post.userId.username %>'s profile">
         <a
           class="flex items-center gap-2"
@@ -17,10 +17,35 @@
           <img
             class="size-9 rounded-lg overflow-hidden object-cover border border-zinc-900"
             src="<%= post.userId.profile_img %>"
-            alt="" />
-          <%= post.userId.username %>
+            alt="<%= post.userId.username %>'s profile image" />
+          <%= post.userId.username.length > 13 ?
+          post.userId.username.substring(0, 13) + "..." : post.userId.username
+          %>
         </a>
       </h1>
+      <% if(isLogin) { %> <% if(!isFollowing(userInfo, post.userId)) { %>
+      <form action="/admin/follow" method="post">
+        <input type="text" name="_csrf" value="<%= csrfToken %>" hidden />
+        <input type="text" name="userId" value="<%= userInfo._id %>" hidden />
+        <input
+          type="text"
+          name="followId"
+          value="<%= post.userId._id %>"
+          hidden />
+        <button class="text-blue-500">Follow</button>
+      </form>
+      <% } else { %>
+      <form action="/admin/unfollow" method="post">
+        <input type="text" name="_csrf" value="<%= csrfToken %>" hidden />
+        <input type="text" name="userId" value="<%= userInfo._id %>" hidden />
+        <input
+          type="text"
+          name="unfollowId"
+          value="<%= post.userId._id %>"
+          hidden />
+        <button class="text-blue-500">Unfollow</button>
+      </form>
+      <% } %> <% } %>
     </header>
     <div class="w-full p-3 h-[calc(100%-3.5rem)] overflow-y-scroll">
       <img

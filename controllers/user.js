@@ -2,11 +2,12 @@ const User = require("../models/user");
 
 exports.followUser = (req, res) => {
   const { userId, followId } = req.body;
+  let prevUrl = req.get("Referer");
   let currentUser;
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        return res.redirect(`/profile/${followId}`);
+        return res.redirect(prevUrl);
       }
       currentUser = user;
       return User.findById(followId);
@@ -17,7 +18,7 @@ exports.followUser = (req, res) => {
       }
       if (currentUser.following.includes(followId)) {
         console.log("Already following this user");
-        return res.redirect(`/profile/${followId}`);
+        return res.redirect(prevUrl);
       }
 
       currentUser.following.push(followId);
@@ -26,7 +27,7 @@ exports.followUser = (req, res) => {
       Promise.all([currentUser.save(), userToFollow.save()])
         .then((_) => {
           req.session.userInfo = currentUser;
-          return res.redirect(`/profile/${followId}`);
+          return res.redirect(prevUrl);
         })
         .catch((err) => console.log(err));
     })
@@ -36,11 +37,12 @@ exports.followUser = (req, res) => {
 exports.unfollowUser = (req, res) => {
   const { userId, unfollowId } = req.body;
   let currentUser;
+  let prevUrl = req.get("Referer");
 
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        return res.redirect(`/profile/${unfollowId}`);
+        return res.redirect(prevUrl);
       }
       currentUser = user;
       return User.findById(unfollowId);
@@ -51,7 +53,7 @@ exports.unfollowUser = (req, res) => {
       }
       if (!currentUser.following.includes(unfollowId)) {
         console.log("Already unfollowing this user");
-        return res.redirect(`/profile/${unfollowId}`);
+        return res.redirect(prevUrl);
       }
 
       currentUser.following = currentUser.following.filter(
@@ -63,7 +65,7 @@ exports.unfollowUser = (req, res) => {
 
       Promise.all([currentUser.save(), userToUnfollow.save()]);
       req.session.userInfo = currentUser;
-      return res.redirect(`/profile/${unfollowId}`);
+      return res.redirect(prevUrl);
     })
     .catch((err) => {
       console.error(err);
@@ -81,7 +83,7 @@ exports.renderViewFollowersPage = (req, res) => {
 
       const followersPromises = user.followers.map((follower) => {
         return User.findById(follower)
-          .select("_id username email profile_img followers")
+          .select("_id username email profile_img followers following")
           .then((user) => {
             return user;
           });
@@ -120,6 +122,43 @@ exports.renderViewFollowingPage = (req, res) => {
           user,
           following,
         });
+      });
+    })
+    .catch((err) => console.log(err));
+};
+
+exports.renderSearchUserPage = (req, res) => {
+  res.render("search-user", {
+    title: "Explore World",
+    users: [],
+    oldSearchQuery: "",
+  });
+};
+
+exports.searchUser = (req, res) => {
+  const { search_query } = req.query;
+  if (!req.query.search_query || req.query.search_query.trim() === "") {
+    return res.redirect("/");
+  }
+  User.find()
+    .select("_id username profile_img followers following")
+    .then((users) => {
+      let findResults = users.filter((user) => {
+        if (req.session.isLogin) {
+          return (
+            user._id.toString() !== req.session.userInfo._id.toString() &&
+            user.username.toLowerCase().includes(search_query.toLowerCase())
+          );
+        } else {
+          return user.username
+            .toLowerCase()
+            .includes(search_query.toLowerCase());
+        }
+      });
+      res.render("search-user", {
+        title: "Explore World",
+        users: findResults,
+        searchQuery: search_query,
       });
     })
     .catch((err) => console.log(err));

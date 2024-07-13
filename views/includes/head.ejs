@@ -19,6 +19,13 @@
           <% if(isLogin) { %>
           <a href="/admin/create-post" class="font-medium">Upload Post</a>
           <% } %>
+          <form class="flex gap-2" action="/search-user/" method="get">
+            <input class="px-3 py-1 border-2 border-zinc-400 outline-none focus:border-zinc-950" type="text" name="search_query"
+               placeholder="Enter a username" />
+            <button class="bg-blue-500 size-10 flex justify-center items-center text-white mr-2">
+              <i class="fa fa-search"></i>
+            </button>
+            </form>
         </ul>
         <ul class="flex items-center gap-3">
           <% if(isLogin) { %>

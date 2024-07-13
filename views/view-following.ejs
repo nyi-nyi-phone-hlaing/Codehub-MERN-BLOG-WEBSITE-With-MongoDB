@@ -20,23 +20,28 @@
     </div>
   </section>
   <% } %>
-  <div class="w-full grid grid-cols-6 p-3 gap-3">
+  <div
+    class="w-full p-3 gap-3 grid grid-cols-5 max-xl:grid-cols-4 max-lg:grid-cols-3 max-md:grid-cols-2 max-sm:grid-cols-1">
     <% for(let followed of following) { %>
-    <div
-      class="p-3 flex flex-col items-center gap-1 rounded-md bg-blue-50 shadow-md">
+    <div class="bg-zinc-100 p-3 rounded-md shadow-md">
       <a href="/profile/<%= followed._id %>">
         <img
           class="size-14 rounded-md overflow-hidden"
           src="<%= followed.profile_img %>"
           alt="<%= followed.username %>'s profile image" />
-      </a>
-      <a href="/profile/<%= followed._id %>">
         <h1 class="text-lg">
           <%= followed.username.length > 12 ? followed.username.substring(0, 12)
           + "..." : followed.username %>
         </h1>
       </a>
-      <p><%= followed.followers.length %> followers</p>
+      <ul class="flex items-center gap-2 mb-2">
+        <li class="text-sm text-zinc-600">
+          <%= followed.followers.length %> Followers
+        </li>
+        <li class="text-sm text-zinc-600">
+          <%= followed.following.length %> Following
+        </li>
+      </ul>
 
       <% if(isLogin && !isFollowing(userInfo, followed) &&
       userInfo._id.toString() !== followed._id.toString() ) { %>

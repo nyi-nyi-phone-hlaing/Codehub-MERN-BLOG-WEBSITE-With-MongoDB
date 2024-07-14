@@ -1,6 +1,18 @@
 </section>
 </main>
 <script>
+     document.getElementById('toggleMenuButton').onclick = function () {
+          let menu = document.querySelector(".menu");
+          const isActive = menu.classList.contains('active');
+          if(isActive) {
+               menu.classList.remove('active')
+          } else {
+               menu.classList.add('active')
+          }
+
+     }
+</script>
+<script>
      // Function to confirm account deletion
      document.getElementById('deletePostForm').onsubmit = function (e) {
           if (!confirm('Are you sure you want to delete this post? This action cannot be undone.')) {

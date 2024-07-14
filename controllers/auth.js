@@ -4,36 +4,26 @@ const Post = require("../models/post");
 const bcrypt = require("bcryptjs");
 const mailSending = require("../utils/mailSending");
 const saltRound = 10;
+const { validationResult } = require("express-validator");
 
 exports.renderResetPasswordPage = (req, res) => {
-  let message = req.flash("error");
-  if (message) {
-    message = message[0];
-  } else {
-    message = null;
-  }
-
   res.render("auth/reset-password", {
     title: "Reset Password",
-    errorMsg: message,
+    errorMsg: null,
+    oldFormData: { email: "" },
   });
 };
 
 exports.changeNewPasswordPage = (req, res) => {
   const { token } = req.params;
-  let message = req.flash("error");
-  if (message) {
-    message = message[0];
-  } else {
-    message = null;
-  }
 
   User.findOne({ resetToken: token, tokenExpiration: { $gt: Date.now() } })
     .then((user) => {
       if (user) {
         return res.render("auth/new-password", {
           title: "Change New Password",
-          errorMsg: message,
+          errorMsg: null,
+          oldFormData: { password: "", confirmPassword: "" },
           resetToken: token,
           userId: user._id,
         });
@@ -67,14 +57,8 @@ exports.renderViewProfile = (req, res) => {
 
 exports.renderProfileEditPage = (req, res) => {
   const { id } = req.params;
-  let message = req.flash("error");
-  if (message) {
-    message = message[0];
-  } else {
-    message = null;
-  }
   User.findById(id)
-    .select("_id username email profile_img bio")
+    .select("_id username profile_img bio")
     .then((user) => {
       if (!user) {
         return res.redirect(`/profile/${id}`);
@@ -82,7 +66,7 @@ exports.renderProfileEditPage = (req, res) => {
       res.render("edit-profile", {
         title: user.username,
         user,
-        errorMsg: message,
+        errorMsg: null,
       });
     })
     .catch((err) => console.log(err));
@@ -91,26 +75,33 @@ exports.renderProfileEditPage = (req, res) => {
 exports.renderLoginPage = (req, res) => {
   res.render("auth/login", {
     title: "Login",
-    errorMsg: "",
+    errorMsg: null,
     oldFormData: { email: "", password: "" },
   });
 };
 
 exports.renderSignUpPage = (req, res) => {
-  res.render("auth/signup", { title: "Sign Up", errorMsg: req.flash("error") });
+  res.render("auth/signup", {
+    title: "Sign Up",
+    errorMsg: null,
+    oldFormData: { username: "", email: "", password: "" },
+  });
 };
 
 exports.loginAccount = (req, res) => {
   const { email, password } = req.body;
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.render("auth/login", {
+      title: "Login",
+      errorMsg: errors.array()[0].msg,
+      oldFormData: { email, password },
+    });
+  }
+
   User.findOne({ email })
     .then((user) => {
-      if (!user) {
-        return res.render("auth/login", {
-          title: "Login",
-          errorMsg: "Invalid email or password",
-          oldFormData: { email, password },
-        });
-      }
       return bcrypt
         .compare(password, user.password)
         .then((match) => {
@@ -137,18 +128,18 @@ exports.loginAccount = (req, res) => {
 
 exports.signupAccount = (req, res) => {
   const { username, email, password } = req.body;
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.render("auth/signup", {
+      title: "Sign Up",
+      errorMsg: errors.array()[0].msg,
+      oldFormData: { username, email, password },
+    });
+  }
+
   User.findOne({ $or: [{ email }, { username }] })
     .then((user) => {
-      if (user) {
-        if (user.username === username) {
-          req.flash("error", "Username is already taken");
-        }
-
-        if (user.email === email) {
-          req.flash("error", "Email is already taken");
-        }
-        return res.redirect("/signup");
-      }
       return bcrypt
         .hash(password, saltRound)
         .then((hashPassword) => {
@@ -205,14 +196,25 @@ exports.deleteAccount = (req, res) => {
 
 exports.updateProfile = (req, res) => {
   const { id, username, profile_img, bio } = req.body;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.render("edit-profile", {
+      title: username,
+      user: { _id: id, username, profile_img, bio },
+      errorMsg: errors.array()[0].msg,
+    });
+  }
+
   User.findById(id)
     .then((user) => {
       User.find({ _id: { $ne: id } }).then((users) => {
         let filterUsername = users.filter((u) => u.username === username);
         if (filterUsername.length) {
-          console.log(filterUsername);
-          req.flash("error", "Username is already taken");
-          return res.redirect(`/admin/edit-personal-profile/${id}`);
+          return res.render("edit-profile", {
+            title: username,
+            user: { _id: id, username, profile_img, bio },
+            errorMsg: "Username is already taken.",
+          });
         }
         user.username = username;
         user.profile_img = profile_img;
@@ -234,6 +236,15 @@ exports.updateProfile = (req, res) => {
 
 exports.requestResetPasswordLink = (req, res) => {
   const { email } = req.body;
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.render("auth/reset-password", {
+      title: "Reset Password",
+      errorMsg: errors.array()[0].msg,
+      oldFormData: { email },
+    });
+  }
 
   crypto.randomBytes(32, (err, buffer) => {
     if (err) {
@@ -243,10 +254,6 @@ exports.requestResetPasswordLink = (req, res) => {
     const token = buffer.toString("hex");
     User.findOne({ email })
       .then((user) => {
-        if (!user) {
-          req.flash("error", "Sorry, we couldn't find a user with this email.");
-          return res.redirect("/reset-password");
-        }
         user.resetToken = token;
         user.tokenExpiration = Date.now() + 300000;
         user.save();
@@ -275,6 +282,17 @@ exports.requestResetPasswordLink = (req, res) => {
 
 exports.updatePassword = (req, res) => {
   const { password, confirmPassword, resetToken, userId } = req.body;
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.render("auth/new-password", {
+      title: "Change New Password",
+      errorMsg: errors.array()[0].msg,
+      oldFormData: { password, confirmPassword },
+      resetToken,
+      userId,
+    });
+  }
 
   let resetUser;
   User.findOne({
@@ -296,7 +314,13 @@ exports.updatePassword = (req, res) => {
           })
           .catch((err) => console.log(err));
       }
-      return res.redirect(`/reset-password/${resetToken}`);
+      return res.render("auth/new-password", {
+        title: "Change New Password",
+        errorMsg: "Password doesn't match!",
+        oldFormData: { password, confirmPassword },
+        resetToken,
+        userId,
+      });
     })
     .catch((err) => console.log(err));
 };

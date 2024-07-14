@@ -20,6 +20,7 @@ const timeAgo = require("./utils/timeAgo");
 const User = require("./models/user");
 const { isLogin } = require("./middleware/isLogin");
 const isFollowing = require("./utils/isFollowing");
+const formatNumber = require("./utils/formatNumber");
 
 //* Initializing
 const app = express();
@@ -71,6 +72,7 @@ app.use(userRoutes);
 // Make the helper function available to EJS templates
 app.locals.timeAgo = timeAgo;
 app.locals.isFollowing = isFollowing;
+app.locals.formatNumber = formatNumber;
 
 //* Server Setup
 const port = process.env.PORT || 8081;

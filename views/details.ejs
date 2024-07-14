@@ -23,7 +23,8 @@
           %>
         </a>
       </h1>
-      <% if(isLogin) { %> <% if(!isFollowing(userInfo, post.userId)) { %>
+      <% if(isLogin && userInfo._id.toString() !== post.userId._id.toString()) {
+      %> <% if(!isFollowing(userInfo, post.userId)) { %>
       <form action="/admin/follow" method="post">
         <input type="text" name="_csrf" value="<%= csrfToken %>" hidden />
         <input type="text" name="userId" value="<%= userInfo._id %>" hidden />

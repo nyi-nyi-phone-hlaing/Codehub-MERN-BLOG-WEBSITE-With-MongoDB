@@ -13,3 +13,11 @@ a , button {
 img{
   @apply object-cover
 }
+
+.active {
+  @apply flex;
+}
+
+nav .menu {
+  @apply md:hidden
+}

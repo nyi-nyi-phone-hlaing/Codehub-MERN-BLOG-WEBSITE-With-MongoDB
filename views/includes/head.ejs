@@ -12,22 +12,45 @@
   <body>
     <main class="w-full h-screen overflow-hidden font-bold">
       <nav
-        class="w-full h-14 px-3 flex items-center justify-between border-b-2 border-zinc-950">
+        class="relative w-full h-14 px-3 flex items-center justify-between border-b-2 border-zinc-950">
         <a href="/"><h1 class="text-xl">Dev Diaries</h1></a>
-        <ul class="flex items-center gap-3">
+        <div class="flex gap-2 md:hidden">
+          <% if(isLogin) { %>
+          <a
+            href="/profile/<%= userInfo._id %>"
+            class="font-medium size-9 rounded-full overflow-hidden border-2 border-blue-500 md:hidden">
+            <img
+              class="w-full h-full"
+              src="<%= userInfo.profile_img %>"
+              alt="<%= userInfo.username %>'s profile image"
+              title="Go to profile" />
+          </a>
+          <% } %>
+          <button
+            id="toggleMenuButton"
+            class="size-9 text-xl text-white bg-zinc-900 grid place-items-center rounded-md md:hidden">
+            <i class="fa fa-bars"></i>
+          </button>
+        </div>
+
+        <ul class="flex items-center gap-3 max-md:hidden">
           <a href="/" class="">Home</a>
           <% if(isLogin) { %>
           <a href="/admin/create-post" class="font-medium">Upload Post</a>
           <% } %>
           <form class="flex gap-2" action="/search-user/" method="get">
-            <input class="px-3 py-1 border-2 border-zinc-400 outline-none focus:border-zinc-950" type="text" name="search_query"
-               placeholder="Enter a username" />
-            <button class="bg-blue-500 size-10 flex justify-center items-center text-white mr-2">
+            <input
+              class="px-3 py-1 border-2 border-zinc-400 outline-none focus:border-zinc-950"
+              type="text"
+              name="search_query"
+              placeholder="Enter a username" />
+            <button
+              class="bg-blue-500 size-10 flex justify-center items-center text-white mr-2">
               <i class="fa fa-search"></i>
             </button>
-            </form>
+          </form>
         </ul>
-        <ul class="flex items-center gap-3">
+        <ul class="flex items-center gap-3 max-md:hidden">
           <% if(isLogin) { %>
           <a
             href="/profile/<%= userInfo._id %>"
@@ -49,5 +72,41 @@
           </a>
           <% } %>
         </ul>
+        <!-- For mobile devices -->
+        <ul
+          class="absolute z-50 menu w-full py-4 gap-3 hidden flex-col items-center top-14 left-0 bg-zinc-50 bg-opacity-50 backdrop-blur-md !md:hidden" >
+          <a href="/" class="">Home</a>
+          <% if(isLogin) { %>
+          <a href="/admin/create-post" class="font-medium">Upload Post</a>
+          <% } %>
+          <form class="flex gap-2" action="/search-user/" method="get">
+            <input
+              class="px-3 py-1 border-2 border-zinc-400 outline-none focus:border-zinc-950"
+              type="text"
+              name="search_query"
+              placeholder="Enter a username" />
+            <button
+              class="bg-blue-500 size-10 flex justify-center items-center text-white mr-2">
+              <i class="fa fa-search"></i>
+            </button>
+          </form>
+          <% if(!isLogin) { %>
+          <div class="flex gap-3">
+            <a
+              href="/login"
+              class="px-3 py-1 bg-zinc-950 text-white border border-zinc-950">
+              Login
+            </a>
+            <a
+              href="/signup"
+              class="px-3 py-1 text-black border border-zinc-950">
+              Sign Up
+            </a>
+          </div>
+
+          <% } %>
+        </ul>
       </nav>
       <section class="w-full h-[calc(100%-3.5rem)] overflow-hidden">
+        <!--Hello World-->
+

@@ -1,7 +1,12 @@
 <%- include("./includes/head.ejs") %>
 <section class="w-full h-full overflow-y-scroll">
-  <div class="w-full flex flex-wrap px-3 py-5">
-    <div class="pr-10">
+  <div class="w-full flex flex-wrap p-3">
+    <div class="pr-10 max-md:w-full max-md:flex">
+      <a
+        href="/"
+        class="size-10 mb-2 grid place-items-center bg-zinc-100 text-zinc-950">
+        <i class="fa fa-arrow-left"></i>
+      </a>
       <img
         class="size-28 rounded-lg overflow-hidden border-2 border-zinc-900 mb-3 object-cover"
         src="<%= user.profile_img %>"
@@ -30,21 +35,25 @@
         <% if(isLogin && userInfo._id.toString() === user._id.toString()) { %>
         <a
           class="bg-blue-500 text-white px-2 py-1 rounded-sm mb-2 border border-blue-500"
-          href="/admin/create-post"
-          >Create a new post</a
-        >
+          href="/admin/create-post">
+          Create a new post
+        </a>
         <a
           class="bg-blue-500 text-white px-2 py-1 rounded-sm mb-2 border border-blue-500"
-          href="/admin/edit-personal-profile/<%= user._id %>"
-          >Edit your personal profile</a
-        >
+          href="/admin/edit-personal-profile/<%= user._id %>">
+          Edit Profile
+        </a>
         <form action="/logout" method="post">
           <input type="text" name="_csrf" value="<%= csrfToken %>" hidden />
-          <button class="bg-red-200 text-red-600 px-2 py-1 rounded-sm border border-red-600 mb-2">
+          <button
+            class="bg-red-200 text-red-600 px-2 py-1 rounded-sm border border-red-600 mb-2">
             Logout
           </button>
         </form>
-        <form id="deleteAccountForm" action="/admin/delete-account/<%= userInfo._id %>" method="post">
+        <form
+          id="deleteAccountForm"
+          action="/admin/delete-account/<%= userInfo._id %>"
+          method="post">
           <input type="text" name="_csrf" value="<%= csrfToken %>" hidden />
           <button
             class="bg-red-600 text-white px-2 py-1 rounded-sm border border-red-600 mb-2">

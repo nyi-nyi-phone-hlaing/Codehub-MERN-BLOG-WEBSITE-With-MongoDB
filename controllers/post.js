@@ -1,3 +1,4 @@
+const { validationResult } = require("express-validator");
 const Post = require("../models/post");
 
 exports.renderHomePage = (req, res) => {
@@ -16,6 +17,8 @@ exports.renderHomePage = (req, res) => {
 exports.renderCreatePage = (req, res) => {
   res.render("create-post", {
     title: "Create Post Page",
+    errorMsg: null,
+    oldFormData: { title: "", image_url: "", description: "" },
   });
 };
 
@@ -34,8 +37,9 @@ exports.renderDetailsPage = (req, res) => {
 exports.renderEditPage = (req, res) => {
   const { id } = req.params;
   Post.findById(id)
+    .select("_id title image_url description")
     .then((post) => {
-      res.render("edit-post", { title: post.title, post });
+      res.render("edit-post", { title: post.title, post, errorMsg: null });
     })
     .catch((err) => {
       console.log(err);
@@ -44,6 +48,16 @@ exports.renderEditPage = (req, res) => {
 
 exports.createPost = (req, res) => {
   const { title, description, image_url } = req.body;
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.render("create-post", {
+      title: "Create Post Page",
+      errorMsg: errors.array()[0].msg,
+      oldFormData: { title, image_url, description },
+    });
+  }
+
   Post.create({ title, description, image_url, userId: req.session.userInfo })
     .then(() => {
       res.redirect("/");
@@ -55,7 +69,15 @@ exports.createPost = (req, res) => {
 
 exports.editPost = (req, res) => {
   const { _id, title, description, image_url } = req.body;
+  const errors = validationResult(req);
 
+  if (!errors.isEmpty()) {
+    return res.render("edit-post", {
+      title,
+      errorMsg: errors.array()[0].msg,
+      post: { _id, title, image_url, description },
+    });
+  }
   Post.findById(_id)
     .then((post) => {
       post.title = title;

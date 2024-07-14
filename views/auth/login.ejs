@@ -10,11 +10,13 @@
       </a>
       <h1 class="text-xl">Login to your account</h1>
     </header>
-    <% if(errorMsg !== "") { %>
-    <p
-      class="w-full py-1 mt-2 bg-pink-100 text-red-500 text-center border border-pink-500">
-      <%= errorMsg %>
-    </p>
+    <% if(errorMsg) { %>
+    <div class="w-full px-3">
+      <p
+        class="py-1 mt-2 bg-pink-100 text-red-500 text-center border border-pink-500">
+        <%= errorMsg %>
+      </p>
+    </div>
     <% } %>
     <form action="/login" method="post" class="w-full p-3">
       <input type="text" name="_csrf" value="<%= csrfToken %>" hidden />

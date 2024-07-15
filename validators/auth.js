@@ -13,6 +13,7 @@ exports.usernameValidate = (username) => {
           "Username can only contain letters, numbers, and spaces."
         );
       }
+      return true;
     })
     .custom((value, { req }) => {
       return User.findOne({ username: value }).then((user) => {

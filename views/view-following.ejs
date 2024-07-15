@@ -9,7 +9,7 @@
     </a>
     <h1 class="text-lg">
       <%= isLogin && user._id.toString() !== userInfo._id.toString() ?
-      user.username + "'s" : "My" %> following
+      user.username + "'s" : isLogin ? "My" : user.username + "'s" %> following
     </h1>
   </div>
 
@@ -18,7 +18,8 @@
     <div>
       <h1 class="text-zinc-500 text-xl mb-3">
         <%= isLogin && user._id.toString() !== userInfo._id.toString() ?
-        user.username : "You" %> don't following user
+        user.username : isLogin ? "You" : user.username %> didn't following
+        another user
       </h1>
       <a
         href="/profile/<%= user._id %>"
@@ -44,10 +45,10 @@
       </a>
       <ul class="flex items-center gap-2 mb-2">
         <li class="text-sm text-zinc-600">
-          <%= followed.followers.length %> Followers
+          <%= formatNumber(followed.followers.length) %> Followers
         </li>
         <li class="text-sm text-zinc-600">
-          <%= followed.following.length %> Following
+          <%= formatNumber(followed.following.length) %> Following
         </li>
       </ul>
 

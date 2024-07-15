@@ -7,7 +7,21 @@
       class="bg-black size-10 flex justify-center items-center text-white mr-2">
       <i class="fa fa-arrow-left"></i>
     </a>
-    <h1 class="text-lg">Search : <span class="text-blue-500"><%= searchQuery %></span></h1>
+    <h1 class="text-lg max-md:hidden">
+      Search : <span class="text-blue-500"><%= searchQuery %></span>
+    </h1>
+    <form class="flex gap-2 md:hidden" action="/search-user/" method="get">
+      <input
+        class="px-3 py-1 border-2 border-zinc-400 outline-none focus:border-zinc-950"
+        type="text"
+        name="search_query"
+        value="<%= searchQuery %>"
+        placeholder="Enter a username" />
+      <button
+        class="bg-blue-500 size-10 flex justify-center items-center text-white mr-2">
+        <i class="fa fa-search"></i>
+      </button>
+    </form>
   </header>
   <% if(users.length === 0 && searchQuery !== "") { %>
   <section class="w-full h-full grid place-items-center">
@@ -33,10 +47,10 @@
       </a>
       <ul class="flex items-center gap-2 mb-2">
         <li class="text-sm text-zinc-600">
-          <%= user.followers.length %> Followers
+          <%= formatNumber(user.followers.length) %> Followers
         </li>
         <li class="text-sm text-zinc-600">
-          <%= user.following.length %> Following
+          <%= formatNumber(user.following.length) %> Following
         </li>
       </ul>
       <% if(isLogin) { %>

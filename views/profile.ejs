@@ -18,12 +18,12 @@
       <div class="flex items-center gap-3 mb-1">
         <p class="text-zinc-900 hover:text-blue-500">
           <a href="/view-followers/<%= user._id %>">
-            Followers - <%= user.followers.length %>
+            <%= formatNumber(user.followers.length) %> Followers
           </a>
         </p>
         <p class="text-zinc-900 hover:text-blue-500">
           <a href="/view-following/<%= user._id %>">
-            Following - <%= user.following.length %>
+            <%= formatNumber(user.following.length) %> Following
           </a>
         </p>
       </div>
@@ -88,7 +88,10 @@
     </div>
   </div>
   <div class="w-full p-3 overflow-hidden">
-    <h1 class="h-10"><%= user.username %>'s Posts</h1>
+    <h1 class="h-10">
+      <%= isLogin && user._id.toString() !== userInfo._id.toString() ?
+      user.username + "'s" : isLogin ? "My" : user.username + "'s" %> Posts
+    </h1>
     <% if(posts.length === 0) { %>
     <p class="text-zinc-400">No post uploaded yet!</p>
     <% } %>
@@ -100,7 +103,7 @@
           <img
             src="<%= post.image_url %>"
             alt="<%= post.title %>"
-            class="w-full aspect-2/1 mb-1" />
+            class="w-full aspect-2/1 mb-1 bg-zinc-100" />
           <h1 class="text-lg mb-1">
             <%= post.title.length> 20 ? post.title.substring(0, 25) + '...' :
             post.title %>

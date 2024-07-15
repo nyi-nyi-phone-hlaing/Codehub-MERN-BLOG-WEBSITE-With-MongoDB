@@ -39,11 +39,4 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 
-userSchema.pre("remove", function (next) {
-  const Post = mongoose.model("Post");
-  Post.deleteMany({ author: this._id })
-    .then(() => next())
-    .catch(next);
-});
-
 module.exports = model("User", userSchema);

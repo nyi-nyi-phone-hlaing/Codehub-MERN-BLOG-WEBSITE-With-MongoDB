@@ -182,6 +182,11 @@ exports.deleteAccount = (req, res) => {
       return Post.deleteMany({ userId: user._id })
         .then(() => User.findByIdAndDelete(id))
         .then(() => {
+          return User.updateMany({
+            $pull: { followers: user._id, following: user._id },
+          });
+        })
+        .then(() => {
           // Call the logoutAccount function
           req.session.destroy((err) => {
             if (err) {

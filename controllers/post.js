@@ -1,11 +1,12 @@
 const { validationResult } = require("express-validator");
 const Post = require("../models/post");
+const User = require("../models/user");
 
 exports.renderHomePage = (req, res) => {
   Post.find()
     .sort({ createdAt: -1 })
     .populate("userId", "username")
-    .select("title createdAt image_url")
+    .select("title createdAt image_url like dislike")
     .then((posts) => {
       res.render("home", { title: "Home Page", posts });
     })
@@ -104,4 +105,56 @@ exports.deletePost = (req, res) => {
     .catch((err) => {
       console.log(err);
     });
+};
+
+exports.likePost = (req, res) => {
+  const { postId } = req.params;
+  const { userId } = req.body;
+  const prevUrl = req.get("Referer");
+
+  Post.findById({ _id: postId })
+    .then((post) => {
+      if (!post) {
+        return res.redirect(prevUrl);
+      }
+      if (!post.like.includes(userId)) {
+        post.like.push(userId);
+        if (post.dislike.includes(userId)) {
+          post.dislike.pull(userId);
+        }
+      } else {
+        post.like.pull(userId);
+      }
+      post
+        .save()
+        .then((_) => res.redirect(prevUrl))
+        .catch((err) => console.log(err));
+    })
+    .catch((err) => console.log(err));
+};
+
+exports.dislikePost = (req, res) => {
+  const { postId } = req.params;
+  const { userId } = req.body;
+  const prevUrl = req.get("Referer");
+
+  Post.findById({ _id: postId })
+    .then((post) => {
+      if (!post) {
+        return res.redirect(prevUrl);
+      }
+      if (!post.dislike.includes(userId)) {
+        post.dislike.push(userId);
+        if (post.like.includes(userId)) {
+          post.like.pull(userId);
+        }
+      } else {
+        post.dislike.pull(userId);
+      }
+      post
+        .save()
+        .then((_) => res.redirect(prevUrl))
+        .catch((err) => console.log(err));
+    })
+    .catch((err) => console.log(err));
 };

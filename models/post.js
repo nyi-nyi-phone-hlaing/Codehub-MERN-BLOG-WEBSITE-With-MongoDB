@@ -32,6 +32,8 @@ const postSchema = new Schema(
       ref: "User",
       required: true,
     },
+    like: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    dislike: [{ type: Schema.Types.ObjectId, ref: "User" }],
   },
   { timestamps: true }
 );

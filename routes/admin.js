@@ -68,4 +68,10 @@ router.post("/follow", userControllers.followUser);
 // Unfollow
 router.post("/unfollow", userControllers.unfollowUser);
 
+// Like
+router.post("/like/:postId", postControllers.likePost);
+
+// Dislike
+router.post("/dislike/:postId", postControllers.dislikePost);
+
 module.exports = router;

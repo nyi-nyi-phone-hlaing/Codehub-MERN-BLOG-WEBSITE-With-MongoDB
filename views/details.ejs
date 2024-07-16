@@ -23,7 +23,7 @@
           %>
         </a>
       </h1>
-          
+
       <% if(isLogin && userInfo._id.toString() !== post.userId._id.toString()) {
       %> <% if(!isFollowing(userInfo, post.userId)) { %>
       <form action="/admin/follow" method="post">
@@ -55,36 +55,42 @@
         src="<%= post.image_url %>"
         alt="<%= post.title %>" />
 
-        <% if(isLogin) { %>
-          <ul class="flex my-1 items-center gap-2">
-            <form action="/admin/like/<%= post._id %>" method="post">
-              <input type="text" name="_csrf" value="<%= csrfToken %>" hidden />
-              <input type="text" name="userId" value="<%= userInfo._id %>" hidden />
-              <button
-                class="flex items-center text-sm gap-1 px-2 py-0.5 rounded-md <%= isLiked(post, userInfo) ? 'bg-blue-500 text-blue-50' : 'bg-blue-50 text-blue-500' %>">
-                <p>
-                  <%= post.like.length %>
-                </p>
-                <i class="fa-regular fa-thumbs-up"></i>
-              </button>
-            </form>
-            <form action="/admin/dislike/<%= post._id %>" method="post">
-              <input type="text" name="_csrf" value="<%= csrfToken %>" hidden />
-              <input type="text" name="userId" value="<%= userInfo._id %>" hidden />
-              <button
-                class="flex items-center text-sm gap-1 px-2 py-0.5 rounded-md <%= isDisliked(post, userInfo ) ? 'bg-red-500 text-red-50' : 'bg-red-50 text-red-500' %>">
-                <p>
-                  <%= post.dislike.length %>
-                </p>
-                <i class="fa-regular fa-thumbs-down"></i>
-              </button>
-            </form>
-        
-          </ul>
-          <% } %>
-
-      <% if(isLogin && userInfo._id.toString() === post.userId._id.toString()) {
-      %>
+      <% if(isLogin) { %>
+      <ul class="flex my-1 items-center gap-2">
+        <form action="/admin/like/<%= post._id %>" method="post">
+          <input type="text" name="_csrf" value="<%= csrfToken %>" hidden />
+          <input type="text" name="userId" value="<%= userInfo._id %>" hidden />
+          <button
+            class="flex items-center text-sm gap-1 px-2 py-0.5 rounded-md <%= isLiked(post, userInfo) ? 'bg-blue-500 text-blue-50' : 'bg-blue-50 text-blue-500' %>">
+            <p><%= formatNumber(post.like.length) %></p>
+            <i class="fa-regular fa-thumbs-up"></i>
+          </button>
+        </form>
+        <form action="/admin/dislike/<%= post._id %>" method="post">
+          <input type="text" name="_csrf" value="<%= csrfToken %>" hidden />
+          <input type="text" name="userId" value="<%= userInfo._id %>" hidden />
+          <button
+            class="flex items-center text-sm gap-1 px-2 py-0.5 rounded-md <%= isDisliked(post, userInfo ) ? 'bg-red-500 text-red-50' : 'bg-red-50 text-red-500' %>">
+            <p><%= formatNumber(post.dislike.length) %></p>
+            <i class="fa-regular fa-thumbs-down"></i>
+          </button>
+        </form>
+      </ul>
+      <% } else { %>
+      <ul class="flex my-1 items-center gap-2">
+        <li
+          class="flex items-center text-sm gap-1 px-2 py-0.5 rounded-md bg-blue-50 text-blue-500">
+          <p><%= formatNumber(post.like.length) %></p>
+          <i class="fa-regular fa-thumbs-down"></i>
+        </li>
+        <li
+          class="flex items-center text-sm gap-1 px-2 py-0.5 rounded-md bg-red-50 text-red-500">
+          <p><%= formatNumber(post.dislike.length) %></p>
+          <i class="fa-regular fa-thumbs-down"></i>
+        </li>
+      </ul>
+      <% } %> <% if(isLogin && userInfo._id.toString() ===
+      post.userId._id.toString()) { %>
       <div class="flex items-center justify-end gap-2 bg-zinc-100 p-2 mb-2">
         <a
           class="px-3 py-1 bg-zinc-950 text-white border border-zinc-950"

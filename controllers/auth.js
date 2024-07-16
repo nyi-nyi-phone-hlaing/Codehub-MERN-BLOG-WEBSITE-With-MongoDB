@@ -187,6 +187,11 @@ exports.deleteAccount = (req, res) => {
           });
         })
         .then(() => {
+          return Post.updateMany({
+            $pull: { like: user._id, dislike: user._id },
+          });
+        })
+        .then(() => {
           // Call the logoutAccount function
           req.session.destroy((err) => {
             if (err) {

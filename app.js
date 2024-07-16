@@ -78,6 +78,10 @@ app.locals.formatNumber = formatNumber;
 app.locals.isLiked = isLiked;
 app.locals.isDisliked = isDisliked;
 
+app.all("*", (req, res) => {
+  res.render("error/404", { url: req.url });
+});
+
 //* Server Setup
 const port = process.env.PORT || 8081;
 mongoose

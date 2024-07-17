@@ -1,8 +1,7 @@
 const { validationResult } = require("express-validator");
 const Post = require("../models/post");
-const User = require("../models/user");
 
-exports.renderHomePage = (req, res) => {
+exports.renderHomePage = (req, res, next) => {
   Post.find()
     .sort({ createdAt: -1 })
     .populate("userId", "username")
@@ -12,6 +11,8 @@ exports.renderHomePage = (req, res) => {
     })
     .catch((err) => {
       console.log(err);
+      const error = new Error("Internal Server Error");
+      return next(error);
     });
 };
 
@@ -23,7 +24,7 @@ exports.renderCreatePage = (req, res) => {
   });
 };
 
-exports.renderDetailsPage = (req, res) => {
+exports.renderDetailsPage = (req, res, next) => {
   const { id } = req.params;
   Post.findById(id)
     .populate("userId", "username profile_img")
@@ -32,10 +33,12 @@ exports.renderDetailsPage = (req, res) => {
     })
     .catch((err) => {
       console.log(err);
+      const error = new Error("Post not found with this id.");
+      return next(error);
     });
 };
 
-exports.renderEditPage = (req, res) => {
+exports.renderEditPage = (req, res, next) => {
   const { id } = req.params;
   Post.findById(id)
     .select("_id title image_url description")
@@ -44,46 +47,76 @@ exports.renderEditPage = (req, res) => {
     })
     .catch((err) => {
       console.log(err);
+      const error = new Error("Post not found with this id.");
+      return next(error);
     });
 };
 
-exports.createPost = (req, res) => {
-  const { title, description, image_url } = req.body;
+exports.createPost = (req, res, next) => {
+  const { title, description } = req.body;
+  const image = req.file;
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
     return res.render("create-post", {
       title: "Create Post Page",
       errorMsg: errors.array()[0].msg,
-      oldFormData: { title, image_url, description },
+      oldFormData: { title, description },
     });
   }
 
-  Post.create({ title, description, image_url, userId: req.session.userInfo })
+  if (image === undefined) {
+    return res.render("create-post", {
+      title: "Create Post Page",
+      errorMsg: "Only .jpeg, .jpg and .png files are allowed!",
+      oldFormData: { title, description },
+    });
+  }
+
+  Post.create({
+    title,
+    description,
+    image_url: image.path,
+    userId: req.session.userInfo,
+  })
     .then(() => {
       res.redirect("/");
     })
     .catch((err) => {
       console.log(err);
+      const error = new Error("Server Error when creating post.");
+      return next(error);
     });
 };
 
-exports.editPost = (req, res) => {
-  const { _id, title, description, image_url } = req.body;
+exports.editPost = (req, res, next) => {
+  const { _id, title, description } = req.body;
+  const image = req.file;
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
     return res.render("edit-post", {
       title,
       errorMsg: errors.array()[0].msg,
-      post: { _id, title, image_url, description },
+      post: { _id, title, description },
     });
   }
+
+  // if (image === undefined) {
+  //   return res.render("edit-post", {
+  //     title: "Create Post Page",
+  //     errorMsg: "Only .jpeg, .jpg and .png files are allowed!",
+  //     oldFormData: { _id, title, description },
+  //   });
+  // }
+
   Post.findById(_id)
     .then((post) => {
       post.title = title;
       post.description = description;
-      post.image_url = image_url;
+      if (image) {
+        post.image_url = image.path;
+      }
       return post.save();
     })
     .then((result) => {
@@ -92,10 +125,12 @@ exports.editPost = (req, res) => {
     })
     .catch((err) => {
       console.log(err);
+      const error = new Error("Post not found with this id.");
+      return next(error);
     });
 };
 
-exports.deletePost = (req, res) => {
+exports.deletePost = (req, res, next) => {
   const { id } = req.params;
   Post.findByIdAndDelete(id)
     .then(() => {
@@ -104,15 +139,17 @@ exports.deletePost = (req, res) => {
     })
     .catch((err) => {
       console.log(err);
+      const error = new Error("Post not found with this id.");
+      return next(error);
     });
 };
 
-exports.likePost = (req, res) => {
+exports.likePost = (req, res, next) => {
   const { postId } = req.params;
   const { userId } = req.body;
   const prevUrl = req.get("Referer");
 
-  Post.findById({ _id: postId })
+  Post.findById(postId)
     .then((post) => {
       if (!post) {
         return res.redirect(prevUrl);
@@ -128,12 +165,20 @@ exports.likePost = (req, res) => {
       post
         .save()
         .then((_) => res.redirect(prevUrl))
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err);
+          const error = new Error("Server Error when like a post.");
+          return next(error);
+        });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.log(err);
+      const error = new Error("Post not found with this id.");
+      return next(error);
+    });
 };
 
-exports.dislikePost = (req, res) => {
+exports.dislikePost = (req, res, next) => {
   const { postId } = req.params;
   const { userId } = req.body;
   const prevUrl = req.get("Referer");
@@ -154,7 +199,15 @@ exports.dislikePost = (req, res) => {
       post
         .save()
         .then((_) => res.redirect(prevUrl))
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err);
+          const error = new Error("Server Error when dislike a post");
+          return next(error);
+        });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.log(err);
+      const error = new Error("Post not found with this id.");
+      return next(error);
+    });
 };

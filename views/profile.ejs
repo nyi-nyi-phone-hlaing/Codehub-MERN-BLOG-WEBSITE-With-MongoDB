@@ -101,7 +101,7 @@
       <div class="overflow-hidden">
         <a href="/post-details/<%= post._id %>">
           <img
-            src="<%= post.image_url %>"
+            src="<%= '../' + post.image_url %>"
             alt="<%= post.title %>"
             class="w-full aspect-2/1 mb-1 bg-zinc-100" />
           <h1 class="text-lg mb-1">
@@ -143,7 +143,7 @@
           <li
             class="flex items-center text-sm gap-1 px-2 py-0.5 rounded-md bg-blue-50 text-blue-500">
             <p><%= formatNumber(post.like.length) %></p>
-            <i class="fa-regular fa-thumbs-down"></i>
+            <i class="fa-regular fa-thumbs-up"></i>
           </li>
           <li
             class="flex items-center text-sm gap-1 px-2 py-0.5 rounded-md bg-red-50 text-red-500">

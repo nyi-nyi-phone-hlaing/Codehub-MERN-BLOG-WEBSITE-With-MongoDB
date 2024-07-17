@@ -4,13 +4,27 @@ exports.titleValidate = (title) => {
   return body(title).trim().notEmpty().withMessage("Title cannot be empty!");
 };
 
-exports.imageURLValidate = (image_url) => {
-  return body(image_url)
-    .optional({ checkFalsy: true })
-    .isURL({ protocols: ["http", "https"], require_protocol: true })
-    .withMessage(
-      "Image URL must be a valid URL starting with http:// or https://"
-    );
+exports.imageValidate = (image_url) => {
+  //   .custom((value, { req }) => {
+  //   if (!req.file) {
+  //     return Promise.reject("Image is required!");
+  //   }
+  //   return true;
+  // })
+
+  return body(image_url).custom((value, { req }) => {
+    return true;
+    // const { mimetype } = req.file;
+    // console.log(mimetype);
+    // if (
+    //   mimetype === "image/png" ||
+    //   mimetype === "image/jpeg" ||
+    //   mimetype === "image/jpg"
+    // ) {
+    //   return true;
+    // }
+    // return Promise.reject("Only .jpeg, .jpg and .png files are allowed!");
+  });
 };
 
 exports.descriptionValidate = (description) => {

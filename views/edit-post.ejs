@@ -18,7 +18,11 @@
       </p>
     </div>
     <% } %>
-    <form action="/admin/edit-post" method="post" class="w-full p-3" novalidate>
+    <form
+      action="/admin/edit-post"
+      method="post"
+      class="w-full p-3"
+      enctype="multipart/form-data">
       <input type="text" name="_csrf" value="<%= csrfToken %>" hidden />
       <input
         type="text"
@@ -39,9 +43,8 @@
       <div class="flex flex-col mb-2">
         <label for="image_url" class="text-zinc-500 mb-1">Image URL</label>
         <input
-          type="text"
+          type="file"
           name="image_url"
-          value="<%= post.image_url %>"
           class="px-3 py-1 border-2 border-zinc-400 outline-none focus:border-zinc-950" />
       </div>
       <div class="flex flex-col mb-2">

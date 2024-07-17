@@ -13,7 +13,7 @@ const {
 const {
   titleValidate,
   descriptionValidate,
-  imageURLValidate,
+  imageValidate,
 } = require("../validators/post");
 
 //* Initializing
@@ -27,7 +27,7 @@ router.get("/create-post", postControllers.renderCreatePage);
 router.post(
   "/create-post",
   titleValidate("title"),
-  imageURLValidate("image_url"),
+  imageValidate("image_url"),
   descriptionValidate("description"),
   postControllers.createPost
 );
@@ -39,7 +39,7 @@ router.get("/edit-post/:id", postControllers.renderEditPage);
 router.post(
   "/edit-post",
   titleValidate("title"),
-  imageURLValidate("image_url"),
+  imageValidate("image_url"),
   descriptionValidate("description"),
   postControllers.editPost
 );

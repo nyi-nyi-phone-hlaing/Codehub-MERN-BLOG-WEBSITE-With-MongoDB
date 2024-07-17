@@ -14,7 +14,7 @@ exports.renderResetPasswordPage = (req, res) => {
   });
 };
 
-exports.changeNewPasswordPage = (req, res) => {
+exports.changeNewPasswordPage = (req, res, next) => {
   const { token } = req.params;
 
   User.findOne({ resetToken: token, tokenExpiration: { $gt: Date.now() } })
@@ -30,14 +30,18 @@ exports.changeNewPasswordPage = (req, res) => {
       }
       res.redirect("/reset-password");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.log(err);
+      const error = new Error("Check your token or token is expired!");
+      return next(error);
+    });
 };
 
 exports.renderFeedbackPage = (req, res) => {
   res.render("auth/feedback", { title: "Feedback" });
 };
 
-exports.renderViewProfile = (req, res) => {
+exports.renderViewProfile = (req, res, next) => {
   const { id } = req.params;
   User.findById(id)
     .select("_id username email profile_img bio followers following")
@@ -50,12 +54,22 @@ exports.renderViewProfile = (req, res) => {
         .then((posts) => {
           res.render("profile", { title: user.username, user, posts });
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err);
+          const error = new Error(
+            `Error when getting ${user.username}'s posts.`
+          );
+          return next(error);
+        });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.log(err);
+      const error = new Error("User not found with this id.");
+      return next(error);
+    });
 };
 
-exports.renderProfileEditPage = (req, res) => {
+exports.renderProfileEditPage = (req, res, next) => {
   const { id } = req.params;
   User.findById(id)
     .select("_id username profile_img bio")
@@ -69,7 +83,11 @@ exports.renderProfileEditPage = (req, res) => {
         errorMsg: null,
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.log(err);
+      const error = new Error("User not found with this id.");
+      return next(error);
+    });
 };
 
 exports.renderLoginPage = (req, res) => {
@@ -88,7 +106,7 @@ exports.renderSignUpPage = (req, res) => {
   });
 };
 
-exports.loginAccount = (req, res) => {
+exports.loginAccount = (req, res, next) => {
   const { email, password } = req.body;
   const errors = validationResult(req);
 
@@ -121,12 +139,20 @@ exports.loginAccount = (req, res) => {
             }
           });
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err);
+          const error = new Error("Internal Server Error");
+          return next(error);
+        });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.log(err);
+      const error = new Error("User not found with this email.");
+      return next(error);
+    });
 };
 
-exports.signupAccount = (req, res) => {
+exports.signupAccount = (req, res, next) => {
   const { username, email, password } = req.body;
   const errors = validationResult(req);
 
@@ -161,9 +187,17 @@ exports.signupAccount = (req, res) => {
             `,
           });
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err);
+          const error = new Error("Internal Server Error");
+          return next(error);
+        });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.log(err);
+      const error = new Error("Internal Server Error");
+      return next(error);
+    });
 };
 
 exports.logoutAccount = (req, res) => {
@@ -172,7 +206,7 @@ exports.logoutAccount = (req, res) => {
   });
 };
 
-exports.deleteAccount = (req, res) => {
+exports.deleteAccount = (req, res, next) => {
   const { id } = req.params;
   User.findById(id)
     .then((user) => {
@@ -201,10 +235,14 @@ exports.deleteAccount = (req, res) => {
           });
         });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.log(err);
+      const error = new Error("User not found with this id.");
+      return next(error);
+    });
 };
 
-exports.updateProfile = (req, res) => {
+exports.updateProfile = (req, res, next) => {
   const { id, username, profile_img, bio } = req.body;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -241,10 +279,12 @@ exports.updateProfile = (req, res) => {
     })
     .catch((err) => {
       console.log(err);
+      const error = new Error("User not found with this id.");
+      return next(error);
     });
 };
 
-exports.requestResetPasswordLink = (req, res) => {
+exports.requestResetPasswordLink = (req, res, next) => {
   const { email } = req.body;
   const errors = validationResult(req);
 
@@ -286,11 +326,15 @@ exports.requestResetPasswordLink = (req, res) => {
         });
         return res.redirect("/feedback");
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        const error = new Error("User not found with this email.");
+        return next(error);
+      });
   });
 };
 
-exports.updatePassword = (req, res) => {
+exports.updatePassword = (req, res, next) => {
   const { password, confirmPassword, resetToken, userId } = req.body;
   const errors = validationResult(req);
 
@@ -322,7 +366,11 @@ exports.updatePassword = (req, res) => {
             resetUser.save();
             res.redirect("/login");
           })
-          .catch((err) => console.log(err));
+          .catch((err) => {
+            console.log(err);
+            const error = new Error("Internal Server Error.");
+            return next(error);
+          });
       }
       return res.render("auth/new-password", {
         title: "Change New Password",
@@ -332,5 +380,9 @@ exports.updatePassword = (req, res) => {
         userId,
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.log(err);
+      const error = new Error("Internal Server Error");
+      return next(error);
+    });
 };

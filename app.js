@@ -10,6 +10,8 @@ const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
 const flash = require("connect-flash");
+const multer = require("multer");
+const { v4: uuidv4 } = require("uuid");
 
 //* Local Imports
 const postRoutes = require("./routes/post");
@@ -31,6 +33,29 @@ const store = new MongoDBStore({
   uri: process.env.MONGODB_URI,
   collection: "sessions",
 });
+const storageConfig = multer.diskStorage({
+  destination: (req, file, callback) => {
+    callback(null, "uploads");
+  },
+  filename: (req, file, callback) => {
+    const uniqueSuffix = `${uuidv4()}-${Date.now()}`;
+    const name = file.originalname.split(".")[0];
+    const fileType = file.originalname.split(".")[1];
+    callback(null, `${name}-${uniqueSuffix}.${fileType}`);
+  },
+});
+
+const fileFilter = (req, file, callback) => {
+  if (
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/jpeg"
+  ) {
+    callback(null, true);
+  } else {
+    callback(null, false);
+  }
+};
 
 //* Template Engine Setup
 app.set("view engine", "ejs");
@@ -39,7 +64,9 @@ app.set("views", "views");
 //* Middlewares
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(multer({ storage: storageConfig }).single("image_url"));
 app.use(express.static(path.join(__dirname, "public")));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(
   session({
     store,
@@ -81,6 +108,9 @@ app.locals.isDisliked = isDisliked;
 app.all("*", (req, res) => {
   res.render("error/404", { url: req.url });
 });
+app.use((err, req, res, next) => {
+  res.render("error/500", { message: err.message });
+});
 
 //* Server Setup
 const port = process.env.PORT || 8081;
@@ -90,4 +120,6 @@ mongoose
     console.log("Connected to MongoDB!");
     app.listen(port);
   })
-  .catch((err) => console.log(err));
+  .catch((err) => {
+    console.log("Can't connected to MongoDB!");
+  });

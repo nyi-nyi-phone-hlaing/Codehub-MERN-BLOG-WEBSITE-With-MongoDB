@@ -1,6 +1,76 @@
 const User = require("../models/user");
 
-exports.followUser = (req, res) => {
+exports.renderSearchUserPage = (req, res) => {
+  res.render("search-user", {
+    title: "Explore World",
+    users: [],
+    oldSearchQuery: "",
+  });
+};
+
+exports.renderViewFollowersPage = (req, res, next) => {
+  const { id } = req.params;
+  User.findById(id)
+    .then((user) => {
+      if (!user) {
+        return res.redirect(`/profile/${id}`);
+      }
+
+      const followersPromises = user.followers.map((follower) => {
+        return User.findById(follower)
+          .select("_id username email profile_img followers following")
+          .then((user) => {
+            return user;
+          });
+      });
+
+      return Promise.all(followersPromises).then((followers) => {
+        res.render("view-followers", {
+          title: `${user.username}'s followers`,
+          user,
+          followers,
+        });
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      const error = new Error("User not found with this id.");
+      return next(error);
+    });
+};
+
+exports.renderViewFollowingPage = (req, res, next) => {
+  const { id } = req.params;
+  User.findById(id)
+    .then((user) => {
+      if (!user) {
+        return res.redirect(`/profile/${id}`);
+      }
+
+      const followeingPromises = user.following.map((followed) => {
+        return User.findById(followed)
+          .select("_id username email profile_img followers following")
+          .then((user) => {
+            return user;
+          });
+      });
+
+      return Promise.all(followeingPromises).then((following) => {
+        res.render("view-following", {
+          title: `${user.username}'s following`,
+          user,
+          following,
+        });
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      const error = new Error("User not found with this id.");
+      return next(error);
+    });
+};
+
+exports.followUser = (req, res, next) => {
   const { userId, followId } = req.body;
   let prevUrl = req.get("Referer");
   let currentUser;
@@ -29,12 +99,20 @@ exports.followUser = (req, res) => {
           req.session.userInfo = currentUser;
           return res.redirect(prevUrl);
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err);
+          const error = new Error("Internal Server Error");
+          return next(error);
+        });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.log(err);
+      const error = new Error("User not found with this id.");
+      return next(error);
+    });
 };
 
-exports.unfollowUser = (req, res) => {
+exports.unfollowUser = (req, res, next) => {
   const { userId, unfollowId } = req.body;
   let currentUser;
   let prevUrl = req.get("Referer");
@@ -68,74 +146,13 @@ exports.unfollowUser = (req, res) => {
       return res.redirect(prevUrl);
     })
     .catch((err) => {
-      console.error(err);
-      return res.status(500).json({ message: "Internal server error" });
+      console.log(err);
+      const error = new Error("User not found with this id.");
+      return next(error);
     });
 };
 
-exports.renderViewFollowersPage = (req, res) => {
-  const { id } = req.params;
-  User.findById(id)
-    .then((user) => {
-      if (!user) {
-        return res.redirect(`/profile/${id}`);
-      }
-
-      const followersPromises = user.followers.map((follower) => {
-        return User.findById(follower)
-          .select("_id username email profile_img followers following")
-          .then((user) => {
-            return user;
-          });
-      });
-
-      return Promise.all(followersPromises).then((followers) => {
-        res.render("view-followers", {
-          title: `${user.username}'s followers`,
-          user,
-          followers,
-        });
-      });
-    })
-    .catch((err) => console.log(err));
-};
-
-exports.renderViewFollowingPage = (req, res) => {
-  const { id } = req.params;
-  User.findById(id)
-    .then((user) => {
-      if (!user) {
-        return res.redirect(`/profile/${id}`);
-      }
-
-      const followeingPromises = user.following.map((followed) => {
-        return User.findById(followed)
-          .select("_id username email profile_img followers following")
-          .then((user) => {
-            return user;
-          });
-      });
-
-      return Promise.all(followeingPromises).then((following) => {
-        res.render("view-following", {
-          title: `${user.username}'s following`,
-          user,
-          following,
-        });
-      });
-    })
-    .catch((err) => console.log(err));
-};
-
-exports.renderSearchUserPage = (req, res) => {
-  res.render("search-user", {
-    title: "Explore World",
-    users: [],
-    oldSearchQuery: "",
-  });
-};
-
-exports.searchUser = (req, res) => {
+exports.searchUser = (req, res, next) => {
   const { search_query } = req.query;
   if (!req.query.search_query || req.query.search_query.trim() === "") {
     return res.redirect("/");
@@ -161,5 +178,9 @@ exports.searchUser = (req, res) => {
         searchQuery: search_query,
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.log(err);
+      const error = new Error("Internal Server Error");
+      return next(error);
+    });
 };

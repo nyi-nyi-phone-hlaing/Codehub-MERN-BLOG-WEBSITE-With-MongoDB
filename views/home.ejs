@@ -22,7 +22,7 @@
 <% } %>
 
 <section
-  class="w-full max-h-full p-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 overflow-y-scroll">
+  class="w-full max-h-[calc(100%-3.5rem)] p-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 overflow-y-scroll">
   <% for(let post of posts) { %>
   <div class="overflow-hidden">
     <a href="/post-details/<%= post._id %>">
@@ -83,4 +83,20 @@
   </div>
   <% } %>
 </section>
+<div
+  class="absolute bottom-0 left-0 w-full h-14 flex justify-center items-center gap-3 bg-zinc-200">
+  <% if(hasPrevPage) { %>
+  <a
+    href="/?page=<%= prevPage %>"
+    class="px-2 py-1 bg-zinc-950 text-white rounded-sm">
+    Previous (<%= prevPage %>)
+  </a>
+  <% } %> <% if(hasNextPage) { %>
+  <a
+    href="/?page=<%= nextPage %>"
+    class="px-2 py-1 bg-zinc-950 text-white rounded-sm">
+    Next (<%= nextPage %>)
+  </a>
+  <% } %>
+</div>
 <%- include("./includes/foot.ejs") %>

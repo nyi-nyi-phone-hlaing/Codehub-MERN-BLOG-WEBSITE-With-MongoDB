@@ -1,13 +1,57 @@
 const { validationResult } = require("express-validator");
 const Post = require("../models/post");
+const fileDelete = require("../utils/fileDelete");
+const POST_PER_PAGE = 5;
 
 exports.renderHomePage = (req, res, next) => {
+  /** 
+   * * total = 10
+   * * per page = 5
+   * * next page = -5 +5
+   
+   * * (pageNumber (?) - 1) * POST_PER_PAGE (5)
+   * * page => 1 - 1 = 0
+   * * per page => 0 * 5 = 0 (skip value)
+
+   * * page => 2 - 1 = 1
+   * * per page => 1 * 5 = 5 (skip value)
+
+   * * page => 3 - 1 = 2
+   * * per page => 2 * 5 = 10 (skip value)
+    */
+
+  const pageNumber = +req.query.page || 1;
+  let totalPostCount;
+
   Post.find()
-    .sort({ createdAt: -1 })
-    .populate("userId", "username")
-    .select("title createdAt image_url like dislike")
+    .countDocuments()
+    .then((totalPostNumber) => {
+      totalPostCount = totalPostNumber;
+
+      return Post.find()
+        .sort({ createdAt: -1 })
+        .populate("userId", "username")
+        .skip((pageNumber - 1) * POST_PER_PAGE)
+        .limit(POST_PER_PAGE)
+        .select("title createdAt image_url like dislike");
+    })
     .then((posts) => {
-      res.render("home", { title: "Home Page", posts });
+      if (pageNumber <= Math.ceil(totalPostCount / POST_PER_PAGE)) {
+        res.render("home", {
+          title: "Home Page",
+          posts,
+          currentPage: pageNumber,
+          hasNextPage: pageNumber * POST_PER_PAGE < totalPostCount,
+          hasPrevPage: pageNumber > 1,
+          nextPage: pageNumber + 1,
+          prevPage: pageNumber - 1,
+          totalPage: Math.ceil(totalPostCount / POST_PER_PAGE),
+        });
+      } else {
+        return res.render("error/500", {
+          message: "No post avaliable in this page",
+        });
+      }
     })
     .catch((err) => {
       console.log(err);
@@ -102,25 +146,17 @@ exports.editPost = (req, res, next) => {
     });
   }
 
-  // if (image === undefined) {
-  //   return res.render("edit-post", {
-  //     title: "Create Post Page",
-  //     errorMsg: "Only .jpeg, .jpg and .png files are allowed!",
-  //     oldFormData: { _id, title, description },
-  //   });
-  // }
-
   Post.findById(_id)
     .then((post) => {
       post.title = title;
       post.description = description;
       if (image) {
+        fileDelete(post.image_url);
         post.image_url = image.path;
       }
       return post.save();
     })
     .then((result) => {
-      console.log("Post Updated!");
       res.redirect(`/post-details/${result._id}`);
     })
     .catch((err) => {
@@ -132,9 +168,15 @@ exports.editPost = (req, res, next) => {
 
 exports.deletePost = (req, res, next) => {
   const { id } = req.params;
-  Post.findByIdAndDelete(id)
+  Post.findById(id)
+    .then((post) => {
+      if (!post) {
+        return res.redirect("/");
+      }
+      fileDelete(post.image_url);
+      return Post.deleteOne({ _id: id });
+    })
     .then(() => {
-      console.log("Post Deleted!");
       res.redirect("/");
     })
     .catch((err) => {

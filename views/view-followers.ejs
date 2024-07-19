@@ -36,7 +36,7 @@
       <a href="/profile/<%= follower._id %>">
         <img
           class="size-14 rounded-md overflow-hidden"
-          src="<%= follower.profile_img %>"
+          src="<%= '../' + follower.profile_img %>"
           alt="<%= follower.username %>'s profile image" />
         <h1 class="text-lg">
           <%= follower.username.length > 12 ? follower.username.substring(0, 12)

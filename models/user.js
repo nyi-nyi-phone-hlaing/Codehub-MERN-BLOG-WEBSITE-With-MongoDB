@@ -17,8 +17,7 @@ const userSchema = new Schema(
     },
     profile_img: {
       type: String,
-      default:
-        "https://th.bing.com/th/id/OIG1.0F2_LJg.keG6BjHPwwjQ?w=1024&h=1024&rs=1&pid=ImgDetMain",
+      default: "uploads/dev-diaries-default-profile.jpg",
     },
     bio: {
       type: String,

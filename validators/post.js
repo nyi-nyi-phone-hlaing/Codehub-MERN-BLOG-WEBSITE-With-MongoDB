@@ -5,25 +5,8 @@ exports.titleValidate = (title) => {
 };
 
 exports.imageValidate = (image_url) => {
-  //   .custom((value, { req }) => {
-  //   if (!req.file) {
-  //     return Promise.reject("Image is required!");
-  //   }
-  //   return true;
-  // })
-
   return body(image_url).custom((value, { req }) => {
     return true;
-    // const { mimetype } = req.file;
-    // console.log(mimetype);
-    // if (
-    //   mimetype === "image/png" ||
-    //   mimetype === "image/jpeg" ||
-    //   mimetype === "image/jpg"
-    // ) {
-    //   return true;
-    // }
-    // return Promise.reject("Only .jpeg, .jpg and .png files are allowed!");
   });
 };
 

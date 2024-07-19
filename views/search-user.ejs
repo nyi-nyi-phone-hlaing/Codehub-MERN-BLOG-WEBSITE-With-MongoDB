@@ -38,7 +38,7 @@
       <a href="/profile/<%= user._id %>">
         <img
           class="size-14 rounded-md border-2 border-zinc-900"
-          src="<%= user.profile_img %>"
+          src="<%= '../' + user.profile_img %>"
           alt="<%= user.username %>'s profile image" />
         <h1 class="text-lg" title="<%= user.username %>">
           <%= user.username.length > 13 ? user.username.substring(0,13) + "..."

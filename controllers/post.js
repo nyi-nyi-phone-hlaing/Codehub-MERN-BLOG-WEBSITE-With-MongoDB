@@ -36,22 +36,16 @@ exports.renderHomePage = (req, res, next) => {
         .select("title createdAt image_url like dislike");
     })
     .then((posts) => {
-      if (pageNumber <= Math.ceil(totalPostCount / POST_PER_PAGE)) {
-        res.render("home", {
-          title: "Home Page",
-          posts,
-          currentPage: pageNumber,
-          hasNextPage: pageNumber * POST_PER_PAGE < totalPostCount,
-          hasPrevPage: pageNumber > 1,
-          nextPage: pageNumber + 1,
-          prevPage: pageNumber - 1,
-          totalPage: Math.ceil(totalPostCount / POST_PER_PAGE),
-        });
-      } else {
-        return res.render("error/500", {
-          message: "No post avaliable in this page",
-        });
-      }
+      res.render("home", {
+        title: "Home Page",
+        posts,
+        currentPage: pageNumber,
+        hasNextPage: pageNumber * POST_PER_PAGE < totalPostCount,
+        hasPrevPage: pageNumber > 1,
+        nextPage: pageNumber + 1,
+        prevPage: pageNumber - 1,
+        totalPage: Math.ceil(totalPostCount / POST_PER_PAGE),
+      });
     })
     .catch((err) => {
       console.log(err);

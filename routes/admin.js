@@ -57,7 +57,6 @@ router.get("/edit-personal-profile/:id", authControllers.renderProfileEditPage);
 router.post(
   "/update-profile",
   usernameFormatValidate("username"),
-  profileImgValidate("profile_img"),
   bioValidate("bio"),
   authControllers.updateProfile
 );

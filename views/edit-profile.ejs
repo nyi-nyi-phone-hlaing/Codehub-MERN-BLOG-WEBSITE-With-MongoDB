@@ -19,7 +19,11 @@
       </p>
     </div>
     <% } %>
-    <form action="/admin/update-profile" method="post" class="w-full p-3">
+    <form
+      action="/admin/update-profile"
+      method="post"
+      class="w-full p-3"
+      enctype="multipart/form-data">
       <input type="text" name="_csrf" value="<%= csrfToken %>" hidden />
       <input type="text" name="id" value="<%= user._id %>" hidden />
       <div class="flex flex-col mb-2">
@@ -36,9 +40,8 @@
           Profile Image URL
         </label>
         <input
-          type="text"
-          name="profile_img"
-          value="<%= user.profile_img %>"
+          type="file"
+          name="image_url"
           class="px-3 py-1 border-2 border-zinc-400 outline-none focus:border-zinc-950" />
       </div>
       <div class="flex flex-col mb-2">

@@ -16,7 +16,7 @@
           href="/profile/<%= post.userId._id %>">
           <img
             class="size-9 rounded-lg overflow-hidden object-cover border border-zinc-900"
-            src="<%= post.userId.profile_img %>"
+            src="<%= '../' + post.userId.profile_img %>"
             alt="<%= post.userId.username %>'s profile image" />
           <%= post.userId.username.length > 13 ?
           post.userId.username.substring(0, 13) + "..." : post.userId.username

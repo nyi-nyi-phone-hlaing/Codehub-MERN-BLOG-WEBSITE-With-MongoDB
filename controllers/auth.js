@@ -214,7 +214,9 @@ exports.deleteAccount = (req, res, next) => {
         return res.redirect(`/profile/${id}`);
       }
       return Post.deleteMany({ userId: user._id })
-        .then(() => User.findByIdAndDelete(id))
+        .then(() => {
+          User.findByIdAndDelete(id);
+        })
         .then(() => {
           return User.updateMany({
             $pull: { followers: user._id, following: user._id },
@@ -243,13 +245,22 @@ exports.deleteAccount = (req, res, next) => {
 };
 
 exports.updateProfile = (req, res, next) => {
-  const { id, username, profile_img, bio } = req.body;
+  const { id, username, bio } = req.body;
+  const image = req.file;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.render("edit-profile", {
       title: username,
-      user: { _id: id, username, profile_img, bio },
+      user: { _id: id, username, bio },
       errorMsg: errors.array()[0].msg,
+    });
+  }
+
+  if (image === undefined) {
+    return res.render("edit-profile", {
+      title: username,
+      errorMsg: "Only .jpeg, .jpg and .png files are allowed!",
+      user: { _id: id, username, bio },
     });
   }
 
@@ -260,12 +271,14 @@ exports.updateProfile = (req, res, next) => {
         if (filterUsername.length) {
           return res.render("edit-profile", {
             title: username,
-            user: { _id: id, username, profile_img, bio },
+            user: { _id: id, username, bio },
             errorMsg: "Username is already taken.",
           });
         }
         user.username = username;
-        user.profile_img = profile_img;
+        if (image) {
+          user.profile_img = image.path;
+        }
         user.bio = bio.trim();
         user.save();
         req.session.userInfo = user;

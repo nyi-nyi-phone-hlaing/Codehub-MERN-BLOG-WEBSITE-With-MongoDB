@@ -1,7 +1,7 @@
 const { validationResult } = require("express-validator");
 const Post = require("../models/post");
 const fileDelete = require("../utils/fileDelete");
-const POST_PER_PAGE = 5;
+const POST_PER_PAGE = 10;
 
 exports.renderHomePage = (req, res, next) => {
   /** 
@@ -45,6 +45,7 @@ exports.renderHomePage = (req, res, next) => {
         nextPage: pageNumber + 1,
         prevPage: pageNumber - 1,
         totalPage: Math.ceil(totalPostCount / POST_PER_PAGE),
+        noPaginate: POST_PER_PAGE >= totalPostCount,
       });
     })
     .catch((err) => {

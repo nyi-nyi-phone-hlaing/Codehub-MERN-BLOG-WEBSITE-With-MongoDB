@@ -4,6 +4,7 @@ const Post = require("../models/post");
 const bcrypt = require("bcryptjs");
 const mailSending = require("../utils/mailSending");
 const saltRound = 10;
+const POST_PER_PAGE = 10;
 const { validationResult } = require("express-validator");
 
 exports.renderResetPasswordPage = (req, res) => {
@@ -43,24 +44,39 @@ exports.renderFeedbackPage = (req, res) => {
 
 exports.renderViewProfile = (req, res, next) => {
   const { id } = req.params;
+  const pageNumber = +req.query.page || 1;
+  let currentUser;
+  let totalPostCount;
   User.findById(id)
     .select("_id username email profile_img bio followers following")
     .then((user) => {
       if (!user) {
         return res.redirect("/");
       }
-      Post.find({ userId: id })
-        .sort({ createdAt: -1 })
-        .then((posts) => {
-          res.render("profile", { title: user.username, user, posts });
-        })
-        .catch((err) => {
-          console.log(err);
-          const error = new Error(
-            `Error when getting ${user.username}'s posts.`
-          );
-          return next(error);
+      currentUser = user;
+      return Post.find({ userId: id })
+        .countDocuments()
+        .then((totalPostNumber) => {
+          totalPostCount = totalPostNumber;
+          return Post.find({ userId: id })
+            .sort({ createdAt: -1 })
+            .skip((pageNumber - 1) * POST_PER_PAGE)
+            .limit(POST_PER_PAGE);
         });
+    })
+    .then((posts) => {
+      res.render("profile", {
+        title: currentUser.username,
+        user: currentUser,
+        posts,
+        currentPage: pageNumber,
+        hasNextPage: pageNumber * POST_PER_PAGE < totalPostCount,
+        hasPrevPage: pageNumber > 1,
+        nextPage: pageNumber + 1,
+        prevPage: pageNumber - 1,
+        totalPage: Math.ceil(totalPostCount / POST_PER_PAGE),
+        noPaginate: POST_PER_PAGE >= totalPostCount,
+      });
     })
     .catch((err) => {
       console.log(err);

@@ -30,10 +30,10 @@ exports.renderHomePage = (req, res, next) => {
 
       return Post.find()
         .sort({ createdAt: -1 })
-        .populate("userId", "username")
+        .populate("userId", "username premium")
         .skip((pageNumber - 1) * POST_PER_PAGE)
         .limit(POST_PER_PAGE)
-        .select("title createdAt image_url like dislike");
+        .select("title createdAt image_url like dislike premium");
     })
     .then((posts) => {
       res.render("home", {

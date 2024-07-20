@@ -40,7 +40,9 @@
           alt="<%= followed.username %>'s profile image" />
         <h1 class="text-lg">
           <%= followed.username.length > 12 ? followed.username.substring(0, 12)
-          + "..." : followed.username %>
+          + "..." : followed.username %> <% if(followed.toObject().premium) {%>
+          <i class="fa-solid fa-star text-yellow-500 animate-bounce"></i>
+          <% } %>
         </h1>
       </a>
       <ul class="flex items-center gap-2 mb-2">

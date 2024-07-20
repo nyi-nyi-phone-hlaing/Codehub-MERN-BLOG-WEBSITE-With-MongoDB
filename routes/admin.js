@@ -15,6 +15,7 @@ const {
   descriptionValidate,
   imageValidate,
 } = require("../validators/post");
+const { isPremiumUser } = require("../middleware/isPremiumUser");
 
 //* Initializing
 const router = express.Router();
@@ -51,7 +52,11 @@ router.post("/delete-post/:id", postControllers.deletePost);
 router.post("/delete-account/:id", authControllers.deleteAccount);
 
 // Rendering Profile Edit Page
-router.get("/edit-personal-profile/:id", authControllers.renderProfileEditPage);
+router.get(
+  "/edit-personal-profile/:id",
+  isPremiumUser,
+  authControllers.renderProfileEditPage
+);
 
 // Updating Profile
 router.post(
@@ -72,5 +77,20 @@ router.post("/like/:postId", postControllers.likePost);
 
 // Dislike
 router.post("/dislike/:postId", postControllers.dislikePost);
+
+// Rendering Premium Page
+router.get("/premium", userControllers.renderPremiumPage);
+
+// Rendering Subscription Success Page
+router.get(
+  "/subscription-success",
+  userControllers.renderSubscriptionSuccessPage
+);
+
+// Rendering Subscription Cancel Page
+router.get(
+  "/subscription-cancel",
+  userControllers.renderSubscriptionCancelPage
+);
 
 module.exports = router;

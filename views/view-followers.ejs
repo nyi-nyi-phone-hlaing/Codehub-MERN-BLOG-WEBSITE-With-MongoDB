@@ -40,7 +40,9 @@
           alt="<%= follower.username %>'s profile image" />
         <h1 class="text-lg">
           <%= follower.username.length > 12 ? follower.username.substring(0, 12)
-          + "..." : follower.username %>
+          + "..." : follower.username %> <% if(follower.toObject().premium) {%>
+          <i class="fa-solid fa-star text-yellow-500 animate-bounce"></i>
+          <% } %>
         </h1>
       </a>
 

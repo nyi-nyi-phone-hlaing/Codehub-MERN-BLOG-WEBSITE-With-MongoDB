@@ -42,7 +42,9 @@
           alt="<%= user.username %>'s profile image" />
         <h1 class="text-lg" title="<%= user.username %>">
           <%= user.username.length > 13 ? user.username.substring(0,13) + "..."
-          : user.username %>
+          : user.username %> <% if(user.toObject().premium) {%>
+          <i class="fa-solid fa-star text-yellow-500 animate-bounce"></i>
+          <% } %>
         </h1>
       </a>
       <ul class="flex items-center gap-2 mb-2">

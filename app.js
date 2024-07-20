@@ -64,9 +64,10 @@ app.set("views", "views");
 //* Middlewares
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(multer({ storage: storageConfig }).single("image_url"));
+app.use(multer({ storage: storageConfig, fileFilter }).single("image_url"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/admin/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(
   session({
     store,
@@ -85,7 +86,7 @@ app.use((req, res, next) => {
   if (req.session.isLogin) {
     app.locals.userInfo = req.session.userInfo;
     User.findById(req.session.userInfo._id)
-      .select("_id username email profile_img followers following")
+      .select("_id username email profile_img followers following premium")
       .then((user) => {
         req.userInfo = user;
       });

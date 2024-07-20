@@ -76,7 +76,9 @@
         title="View <%= post.userId.username %>'s profile"
         class="text-sm text-zinc-500 hover:text-blue-500">
         <a href="/profile/<%= post.userId._id %>">
-          <%= post.userId.username %>
+          <%= post.userId.username %> <% if(post.userId.toObject().premium) {%>
+          <i class="fa-solid fa-star text-yellow-500 animate-bounce"></i>
+          <% } %>
         </a>
       </li>
     </ul>

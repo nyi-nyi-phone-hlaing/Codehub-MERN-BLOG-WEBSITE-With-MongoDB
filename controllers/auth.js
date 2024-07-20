@@ -47,13 +47,14 @@ exports.renderViewProfile = (req, res, next) => {
   const pageNumber = +req.query.page || 1;
   let currentUser;
   let totalPostCount;
+
   User.findById(id)
-    .select("_id username email profile_img bio followers following")
+    .select("_id username email profile_img bio followers following premium")
     .then((user) => {
       if (!user) {
         return res.redirect("/");
       }
-      currentUser = user;
+      currentUser = user.toObject();
       return Post.find({ userId: id })
         .countDocuments()
         .then((totalPostNumber) => {
@@ -88,7 +89,7 @@ exports.renderViewProfile = (req, res, next) => {
 exports.renderProfileEditPage = (req, res, next) => {
   const { id } = req.params;
   User.findById(id)
-    .select("_id username profile_img bio")
+    .select("_id username profile_img bio premium")
     .then((user) => {
       if (!user) {
         return res.redirect(`/profile/${id}`);
@@ -272,13 +273,13 @@ exports.updateProfile = (req, res, next) => {
     });
   }
 
-  if (image === undefined) {
-    return res.render("edit-profile", {
-      title: username,
-      errorMsg: "Only .jpeg, .jpg and .png files are allowed!",
-      user: { _id: id, username, bio },
-    });
-  }
+  // if (image === undefined) {
+  //   return res.render("edit-profile", {
+  //     title: username,
+  //     errorMsg: "Only .jpeg, .jpg and .png files are allowed!",
+  //     user: { _id: id, username, bio },
+  //   });
+  // }
 
   User.findById(id)
     .then((user) => {
@@ -293,7 +294,13 @@ exports.updateProfile = (req, res, next) => {
         }
         user.username = username;
         if (image) {
-          user.profile_img = image.path;
+          if (
+            image.mimetype === "image/png" ||
+            image.mimetype === "image/jpg" ||
+            image.mimetype === "image/jpeg"
+          ) {
+            user.profile_img = image.path;
+          }
         }
         user.bio = bio.trim();
         user.save();

@@ -1,4 +1,70 @@
 const User = require("../models/user");
+const dotenv = require("dotenv").config();
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+
+exports.renderPremiumPage = (req, res, next) => {
+  stripe.checkout.sessions
+    .create({
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price: "price_1PeaLhRsU3Z8ufcG9JnHvSQv",
+          quantity: 1,
+        },
+      ],
+      mode: "subscription",
+      success_url: `${req.protocol}://${req.get(
+        "host"
+      )}/admin/subscription-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${req.protocol}://${req.get(
+        "host"
+      )}/admin/subscription-cancel`,
+    })
+    .then((stripe_session) => {
+      res.render("premium", {
+        title: "Buy Premium",
+        session_id: stripe_session.id,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      const error = new Error("Something Went Wrong.");
+      return next(error);
+    });
+};
+
+exports.renderSubscriptionSuccessPage = (req, res) => {
+  const session_id = req.query.session_id;
+  if (!session_id) {
+    return res.redirect("/");
+  }
+  User.findById(req.session.userInfo._id)
+    .then((user) => {
+      user.premium = true;
+      user.payment_session_key = session_id;
+      req.session.userInfo = user;
+      req.session.save((err) => {
+        if (err) {
+          console.log(err);
+        }
+      });
+      return user.save();
+    })
+    .then((result) => {
+      console.log(result);
+      res.render("subscription-success", {
+        title: "Subscription Success",
+        subscription_id: result.payment_session_key,
+      });
+    })
+    .catch((err) => console.log(err));
+};
+
+exports.renderSubscriptionCancelPage = (req, res) => {
+  res.render("subscription-cancel", {
+    title: "Subscription Cancel",
+  });
+};
 
 exports.renderSearchUserPage = (req, res) => {
   res.render("search-user", {
@@ -18,7 +84,7 @@ exports.renderViewFollowersPage = (req, res, next) => {
 
       const followersPromises = user.followers.map((follower) => {
         return User.findById(follower)
-          .select("_id username email profile_img followers following")
+          .select("_id username email profile_img followers following premium")
           .then((user) => {
             return user;
           });
@@ -49,7 +115,7 @@ exports.renderViewFollowingPage = (req, res, next) => {
 
       const followeingPromises = user.following.map((followed) => {
         return User.findById(followed)
-          .select("_id username email profile_img followers following")
+          .select("_id username email profile_img followers following premium")
           .then((user) => {
             return user;
           });
@@ -158,7 +224,7 @@ exports.searchUser = (req, res, next) => {
     return res.redirect("/");
   }
   User.find()
-    .select("_id username profile_img followers following")
+    .select("_id username profile_img followers following premium")
     .then((users) => {
       let findResults = users.filter((user) => {
         if (req.session.isLogin) {

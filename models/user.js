@@ -30,6 +30,8 @@ const userSchema = new Schema(
       min: 4,
       max: 16,
     },
+    premium: { type: Boolean, default: false },
+    payment_session_key: String,
     resetToken: String,
     tokenExpiration: Date,
     followers: [{ type: Schema.Types.ObjectId, ref: "User" }],

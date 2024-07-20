@@ -1,0 +1,20 @@
+<%- include("./includes/head.ejs") %>
+<section class="w-full h-screen overflow-hidden grid place-items-center">
+  <div>
+    <h1 class="text-5xl text-center mb-2">✅</h1>
+    <h3 class="text-lg text-center">Dev Diaries Subscription Success</h3>
+    <ul>
+      <li class="text-center">
+        Subscription ID -
+        <span class="text-blue-500"><%= subscription_id %></span>
+      </li>
+    </ul>
+    <a
+      class="block w-fit mx-auto my-2 px-3 py-1 bg-blue-500 text-blue-50 rounded-md"
+      href="/">
+      Back to Home
+    </a>
+  </div>
+</section>
+
+<%- include("./includes/foot.ejs") %>

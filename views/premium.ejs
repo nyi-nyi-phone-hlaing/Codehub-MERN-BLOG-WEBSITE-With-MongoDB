@@ -1,0 +1,41 @@
+<%- include("./includes/head.ejs") %>
+<section class="w-full h-screen overflow-hidden grid place-items-center">
+  <div class="p-5 bg-zinc-100 border-2 border-zinc-500 rounded-md">
+    <h1 class="text-xl font-extrabold text-center">Premium Bundle</h1>
+    <ul class="my-3">
+      <li class="px-2 py-1 my-1 border-2 text-blue-500 border-blue-500">
+        Animate Profile Badge
+      </li>
+      <li class="px-2 py-1 my-1 border-2 text-blue-500 border-blue-500">
+        Can added Bio
+      </li>
+      <li class="px-2 py-1 my-1 border-2 text-blue-500 border-blue-500">
+        Can change username
+        <span class="text-sm text-zinc-500">(unlimited)</span>
+      </li>
+      <li class="px-2 py-1 my-1 border-2 text-blue-500 border-blue-500">
+        Can change profile image
+        <span class="text-sm text-zinc-500">(unlimited)</span>
+      </li>
+    </ul>
+    <p class="text-sm text-center mb-2 text-zinc-700">$99.00/lifetime</p>
+    <button
+      class="w-full rounded-md px-2 py-1 text-center bg-blue-500 text-white paymentBtn">
+      Buy Premium
+    </button>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+      let paymentBtn = document.querySelector(".paymentBtn");
+      let stripe = Stripe(
+        "pk_test_51PeV4vRsU3Z8ufcGNx3QDLuU6HqSFQCXkro7znbTRRI9tjtWM0B5Psc0mtuxV4JabD4LcM4bQh1P0lB7BpJrDJoR00gdwdc4Th"
+      );
+      paymentBtn.onclick = (e) => {
+        stripe.redirectToCheckout({
+          sessionId: "<%= session_id %>",
+        });
+      };
+    </script>
+  </div>
+</section>
+
+<%- include("./includes/foot.ejs") %>

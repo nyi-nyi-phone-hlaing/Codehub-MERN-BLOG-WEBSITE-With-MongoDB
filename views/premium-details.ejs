@@ -1,0 +1,50 @@
+<%- include("./includes/head.ejs") %>
+<section class="w-full h-screen overflow-hidden grid place-items-center">
+  <div>
+    <h3 class="text-3xl mb-4 text-center">Premium Details</h3>
+    <ul>
+      <li
+        class="text-left text-base text-zinc-500 px-2 py-1 mb-2 bg-zinc-100 border-2 border-zinc-300">
+        Customer ID <span class="text-blue-500"><%= customer_id %></span>
+      </li>
+      <li
+        class="text-left text-base text-zinc-500 px-2 py-1 mb-2 bg-zinc-100 border-2 border-zinc-300">
+        Name <span class="text-blue-500"><%= customer_name %></span>
+      </li>
+      <li
+        class="text-left text-base text-zinc-500 px-2 py-1 mb-2 bg-zinc-100 border-2 border-zinc-300">
+        Email <span class="text-blue-500"><%= customer_email %></span>
+      </li>
+      <li
+        class="text-left text-base text-zinc-500 px-2 py-1 mb-2 bg-zinc-100 border-2 border-zinc-300">
+        Country <span class="text-blue-500"><%= country %></span>
+      </li>
+      <li
+        class="text-left text-base text-zinc-500 px-2 py-1 mb-2 bg-zinc-100 border-2 border-zinc-300">
+        Currency <span class="text-blue-500"><%= currency %></span>
+      </li>
+      <li
+        class="text-left text-base text-zinc-500 px-2 py-1 mb-2 bg-zinc-100 border-2 border-zinc-300">
+        Postal Code <span class="text-blue-500"><%= postal_code %></span>
+      </li>
+      <li
+        class="text-left text-base text-zinc-500 px-2 py-1 mb-2 bg-zinc-100 border-2 border-zinc-300">
+        Invoice <span class="text-blue-500"><%= invoice %></span>
+      </li>
+      <li
+        class="text-left text-base text-zinc-500 px-2 py-1 mb-2 bg-zinc-100 border-2 border-zinc-300">
+        Payment Status <span class="text-blue-500"><%= payment_status %></span>
+      </li>
+      <li
+        class="text-left text-base text-zinc-500 px-2 py-1 mb-2 bg-zinc-100 border-2 border-zinc-300">
+        Status <span class="text-blue-500"><%= status %></span>
+      </li>
+    </ul>
+    <a
+      class="block w-fit mx-auto my-2 px-3 py-1 bg-blue-500 text-blue-50 rounded-md"
+      href="/">
+      Back to Home
+    </a>
+  </div>
+</section>
+<%- include("./includes/foot.ejs") %>

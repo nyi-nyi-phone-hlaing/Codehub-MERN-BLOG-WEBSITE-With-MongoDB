@@ -61,6 +61,7 @@ router.get(
 // Updating Profile
 router.post(
   "/update-profile",
+  isPremiumUser,
   usernameFormatValidate("username"),
   bioValidate("bio"),
   authControllers.updateProfile
@@ -91,6 +92,13 @@ router.get(
 router.get(
   "/subscription-cancel",
   userControllers.renderSubscriptionCancelPage
+);
+
+// Rendering Premium Details Page
+router.get(
+  "/premium-details",
+  isPremiumUser,
+  userControllers.renderPremiumDetailsPage
 );
 
 module.exports = router;

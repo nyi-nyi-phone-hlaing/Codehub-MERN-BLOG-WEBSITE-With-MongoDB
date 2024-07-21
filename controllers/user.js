@@ -33,9 +33,9 @@ exports.renderPremiumPage = (req, res, next) => {
     });
 };
 
-exports.renderSubscriptionSuccessPage = (req, res) => {
+exports.renderSubscriptionSuccessPage = (req, res, next) => {
   const session_id = req.query.session_id;
-  if (!session_id) {
+  if (!session_id || !session_id.includes("cs_test")) {
     return res.redirect("/");
   }
   User.findById(req.session.userInfo._id)
@@ -57,13 +57,43 @@ exports.renderSubscriptionSuccessPage = (req, res) => {
         subscription_id: result.payment_session_key,
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.log(err);
+      const error = new Error("Something Went Wrong.");
+      return next(error);
+    });
 };
 
 exports.renderSubscriptionCancelPage = (req, res) => {
   res.render("subscription-cancel", {
     title: "Subscription Cancel",
   });
+};
+
+exports.renderPremiumDetailsPage = (req, res, next) => {
+  User.findById(req.session.userInfo._id)
+    .then((user) => {
+      return stripe.checkout.sessions.retrieve(user.payment_session_key);
+    })
+    .then((stripe_session) => {
+      res.render("premium-details", {
+        title: "Premium Details",
+        customer_id: stripe_session.customer,
+        country: stripe_session.customer_details.address.country,
+        postal_code: stripe_session.customer_details.address.postal_code,
+        currency: stripe_session.currency,
+        customer_name: stripe_session.customer_details.name,
+        customer_email: stripe_session.customer_details.email,
+        invoice: stripe_session.invoice,
+        payment_status: stripe_session.payment_status,
+        status: stripe_session.status,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      const error = new Error("Something Went Wrong.");
+      return next(error);
+    });
 };
 
 exports.renderSearchUserPage = (req, res) => {
